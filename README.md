@@ -1,11 +1,10 @@
 # <img src="https://github.com/pip-services/pip-services/raw/master/design/Logo.png" alt="Pip.Services Logo" style="max-width:30%">
-# GRPC Calls for Dart
+# gRPC Calls for Dart
 
 This framework is a part of the [Pip.Services](https://github.com/pip-services/pip-services) project.
 It provides the following synchronous communication components:
 
-- **Grpc** - GRPC [services](https://pip-services3-dart.github.io/pip-services3-grpc-dart/classes/services.grpcservice.html) and [clients](https://pip-services3-dart.github.io/pip-services3-grpc-dart/classes/clients.grpcclient.html)
-<!-- - **Status** - [Heartbeat](https://pip-services3-dart.github.io/pip-services3-grpc-dart/classes/services.heartbeatgrpcservice.html) and [status](https://pip-services3-dart.github.io/pip-services3-grpc-dart/classes/services.statusgrpcservice.html) services -->
+- **gRPC** - GRPC [services] and [clients]
 
 Quick Links:
 
@@ -13,6 +12,10 @@ Quick Links:
 * [API Reference](https://pip-services3-dart.github.io/pip-services3-rpc-dart/globals.html)
 * [Building and Testing](https://github.com/pip-services/pip-services-rpc-dart/blob/master/doc/Development.md)
 * [Contributing](https://github.com/pip-services/pip-services-rpc-dart/blob/master/doc/Development.md/#contrib)
+
+https://grpc.io/docs/quickstart/dart/
+https://developers.google.com/protocol-buffers/docs/darttutorial
+
 
 ## Acknowledgements
 

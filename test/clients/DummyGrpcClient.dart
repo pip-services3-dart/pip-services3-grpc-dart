@@ -12,7 +12,7 @@
 //         super(__dirname + "../../../../test/protos/dummies.proto", "dummies.Dummies")
 //     }
 
-//     public getDummies(correlationId: string, filter: FilterParams, paging: PagingParams,
+//     public getDummies(String correlationId, filter: FilterParams, paging: PagingParams,
 //         callback: (err: any, result: DataPage<Dummy>) => void): void {
 //         this.call('get_dummies',
 //             correlationId, 
@@ -27,7 +27,7 @@
 //         );
 //     }
 
-//     public getDummyById(correlationId: string, dummyId: string,
+//     public getDummyById(String correlationId, dummyId: string,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call('get_dummy_by_id',
 //             correlationId,
@@ -45,7 +45,7 @@
 //         );        
 //     }
 
-//     public createDummy(correlationId: string, dummy: any,
+//     public createDummy(String correlationId, dummy: any,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call('create_dummy',
 //             correlationId,
@@ -63,7 +63,7 @@
 //         );
 //     }
 
-//     public updateDummy(correlationId: string, dummy: any,
+//     public updateDummy(String correlationId, dummy: any,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call('update_dummy',
 //             correlationId, 
@@ -81,7 +81,7 @@
 //         );
 //     }
 
-//     public deleteDummy(correlationId: string, dummyId: string,
+//     public deleteDummy(String correlationId, dummyId: string,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call('delete_dummy_by_id',
 //             correlationId, 

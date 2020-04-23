@@ -1,32 +1,26 @@
-//  @module build 
-// import { Factory } from 'pip-services3-components-node';
-// import { Descriptor } from 'pip-services3-commons-node';
+// import 'package:pip_services3_components/pip_services3_components.dart';
+// import 'package:pip_services3_commons/pip_services3_commons.dart';
+// import '../services/GrpcEndpoint.dart';
 
-// import { GrpcEndpoint } from '../services/GrpcEndpoint';
-// // import { HeartbeatGrpcService } from '../services/HeartbeatGrpcService';
-// // import { StatusGrpcService } from '../services/StatusGrpcService';
-
-// 
 // /// Creates GRPC components by their descriptors.
-// /// 
-// /// See [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/classes/build.factory.html Factory]]
-// /// See [[GrpcEndpoint]]
-// /// See [[HeartbeatGrpcService]]
-// /// See [[StatusGrpcService]] 
-//  
-// export class DefaultGrpcFactory extends Factory {
-// 	public static readonly Descriptor: Descriptor = new Descriptor("pip-services", "factory", "grpc", "default", "1.0");
-//     public static readonly GrpcEndpointDescriptor: Descriptor = new Descriptor("pip-services", "endpoint", "grpc", "*", "1.0");
-//     // public static readonly StatusServiceDescriptor = new Descriptor("pip-services", "status-service", "grpc", "*", "1.0");
-//     // public static readonly HeartbeatServiceDescriptor = new Descriptor("pip-services", "heartbeat-service", "grpc", "*", "1.0");
+// ///
+// /// See [Factory]
+// /// See [GrpcEndpoint]
+// /// See [HeartbeatGrpcService]
+// /// See [StatusGrpcService]
 
-//     
-// 	/// Create a new instance of the factory.
-// 	 
-//     public constructor() {
-//         super();
-//         this.registerAsType(DefaultGrpcFactory.GrpcEndpointDescriptor, GrpcEndpoint);
-//         // this.registerAsType(DefaultRpcFactory.HeartbeatServiceDescriptor, HeartbeatGrpcService);
-//         // this.registerAsType(DefaultRpcFactory.StatusServiceDescriptor, StatusGrpcService);
-//     }
+// class DefaultGrpcFactory extends Factory {
+//   static final descriptor =
+//       Descriptor('pip-services', 'factory', 'grpc', 'default', '1.0');
+//   static final GrpcEndpointDescriptor =
+//       Descriptor('pip-services', 'endpoint', 'grpc', '*', '1.0');
+//   //  static final StatusServiceDescriptor =  Descriptor('pip-services', 'status-service', 'grpc', '*', '1.0');
+//   //  static final HeartbeatServiceDescriptor =  Descriptor('pip-services', 'heartbeat-service', 'grpc', '*', '1.0');
+
+//   /// Create a new instance of the factory.
+//   DefaultGrpcFactory() : super() {
+//     registerAsType(DefaultGrpcFactory.GrpcEndpointDescriptor, GrpcEndpoint);
+//     // registerAsType(DefaultRpcFactory.HeartbeatServiceDescriptor, HeartbeatGrpcService);
+//     // registerAsType(DefaultRpcFactory.StatusServiceDescriptor, StatusGrpcService);
+//   }
 // }

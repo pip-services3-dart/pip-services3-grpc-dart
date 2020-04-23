@@ -37,9 +37,9 @@
 // /// 
 // /// ### References ###
 // /// 
-// /// - <code>\*:logger:\*:\*:1.0</code>         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-// /// - <code>\*:counters:\*:\*:1.0</code>         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-// /// - <code>\*:discovery:\*:\*:1.0</code>        (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
+// /// - \*:logger:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
+// /// - \*:counters:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
+// /// - \*:discovery:\*:\*:1.0        (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
 // /// 
 // /// See [[GrpcService]]
 // /// See [[CommandableHttpService]]
@@ -49,7 +49,7 @@
 // ///     class MyGrpcClient extends GrpcClient implements IMyClient {
 // ///        ...
 // /// 
-// ///        public getData(correlationId: string, id: string, 
+// ///        public getData(String correlationId, id: string, 
 // ///            callback: (err: any, result: MyData) => void): void {
 // ///        
 // ///            let timing = this.instrument(correlationId, 'myclient.get_data');
@@ -164,7 +164,7 @@
 //     /// - name              a method name.
 //     /// Returns Timing object to end the time measurement.
 //      
-// 	protected instrument(correlationId: string, name: string): Timing {
+// 	protected instrument(String correlationId, name: string): Timing {
 //         this._logger.trace(correlationId, "Executing %s method", name);
 //         this._counters.incrementOne(name + ".call_count");
 // 		return this._counters.beginTiming(name + ".call_time");
@@ -179,7 +179,7 @@
 //     /// - result            (optional) an execution result
 //     /// - callback          (optional) an execution callback
 //      
-//     protected instrumentError(correlationId: string, name: string, err: any,
+//     protected instrumentError(String correlationId, name: string, err: any,
 //         result: any = null, callback: (err: any, result: any) => void = null): void {
 //         if (err != null) {
 //             this._logger.error(correlationId, err, "Failed to call %s method", name);
@@ -204,7 +204,7 @@
 // 	/// - correlationId 	(optional) transaction id to trace execution through call chain.
 //     /// - callback 			callback function that receives error or null no errors occured.
 //      
-// 	public open(correlationId: string, callback?: (err: any) => void): void {
+// 	public open(String correlationId, callback?: (err: any) => void): void {
 //         if (this.isOpen()) {
 //             if (callback) callback(null);
 //             return;
@@ -299,7 +299,7 @@
 // 	/// - correlationId 	(optional) transaction id to trace execution through call chain.
 //     /// - callback 			callback function that receives error or null no errors occured.
 //      
-//     public close(correlationId: string, callback?: (err: any) => void): void {
+//     public close(String correlationId, callback?: (err: any) => void): void {
 //         if (this._client != null) {
 //             // Eat exceptions
 //             try {

@@ -16,7 +16,7 @@
 //         super(services.DummiesClient)
 //     }
 
-//     public getDummies(correlationId: string, filter: FilterParams, paging: PagingParams,
+//     public getDummies(String correlationId, filter: FilterParams, paging: PagingParams,
 //         callback: (err: any, result: DataPage<Dummy>) => void): void {
 
 //         paging = paging || new PagingParams();
@@ -52,7 +52,7 @@
 //         );
 //     }
 
-//     public getDummyById(correlationId: string, dummyId: string,
+//     public getDummyById(String correlationId, dummyId: string,
 //         callback: (err: any, result: Dummy) => void): void {
 
 //         let request = new messages.DummyIdRequest();
@@ -73,7 +73,7 @@
 //         );        
 //     }
 
-//     public createDummy(correlationId: string, dummy: any,
+//     public createDummy(String correlationId, dummy: any,
 //         callback: (err: any, result: Dummy) => void): void {
 
 //         let dummyObj = new messages.Dummy();
@@ -99,7 +99,7 @@
 //         );
 //     }
 
-//     public updateDummy(correlationId: string, dummy: any,
+//     public updateDummy(String correlationId, dummy: any,
 //         callback: (err: any, result: Dummy) => void): void {
 
 //         let dummyObj = new messages.Dummy();
@@ -125,7 +125,7 @@
 //         );
 //     }
 
-//     public deleteDummy(correlationId: string, dummyId: string,
+//     public deleteDummy(String correlationId, dummyId: string,
 //         callback: (err: any, result: Dummy) => void): void {
 
 //         let request = new messages.DummyIdRequest();

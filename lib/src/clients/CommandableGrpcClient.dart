@@ -24,16 +24,16 @@
 // /// 
 // /// ### References ###
 // /// 
-// /// - <code>\*:logger:\*:\*:1.0</code>         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-// /// - <code>\*:counters:\*:\*:1.0</code>         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-// /// - <code>\*:discovery:\*:\*:1.0</code>        (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
+// /// - \*:logger:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
+// /// - \*:counters:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
+// /// - \*:discovery:\*:\*:1.0        (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
 // /// 
 // /// ### Example ###
 // /// 
 // ///     class MyCommandableGrpcClient extends CommandableGrpcClient implements IMyClient {
 // ///        ...
 // /// 
-// ///         public getData(correlationId: string, id: string, 
+// ///         public getData(String correlationId, id: string, 
 // ///            callback: (err: any, result: MyData) => void): void {
 // ///        
 // ///            this.callCommand(
@@ -85,7 +85,7 @@
 //     /// - params            command parameters.
 //     /// - callback          callback function that receives result or error.
 //      
-//     public callCommand(name: string, correlationId: string, params: any, callback: (err: any, result: any) => void): void {
+//     public callCommand(name: string, String correlationId, params: any, callback: (err: any, result: any) => void): void {
 //         let method = this._name + '.' + name;
 //         let timing = this.instrument(correlationId, method);
 
