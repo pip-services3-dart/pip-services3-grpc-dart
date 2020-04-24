@@ -1,353 +1,299 @@
-//  @module clients 
-//  @hidden 
-// let _ = require('lodash');
-//  @hidden 
-// let querystring = require('querystring');
-//  @hidden 
-// const fs = require('fs');
+import 'dart:async';
+import 'dart:io';
 
-// import { IOpenable } from 'pip-services3-commons-node';
-// import { IConfigurable } from 'pip-services3-commons-node';
-// import { IReferenceable } from 'pip-services3-commons-node';
-// import { IReferences } from 'pip-services3-commons-node';
-// import { ConfigParams } from 'pip-services3-commons-node';
-// import { CompositeLogger } from 'pip-services3-components-node';
-// import { CompositeCounters } from 'pip-services3-components-node';
-// import { Timing } from 'pip-services3-components-node';
-// import { ApplicationExceptionFactory } from 'pip-services3-commons-node';
-// import { ConnectionException } from 'pip-services3-commons-node';
-// import { UnknownException } from 'pip-services3-commons-node';
-// import { HttpConnectionResolver } from 'pip-services3-rpc-node';
+import 'package:grpc/grpc.dart' as grpc;
+import 'package:protobuf/protobuf.dart';
+//import '../generated/commandable.pbgrpc.dart';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
+import 'package:pip_services3_components/pip_services3_components.dart';
+import 'package:pip_services3_rpc/pip_services3_rpc.dart';
 
-// 
-// /// Abstract client that calls remove endpoints using GRPC protocol.
-// /// 
-// /// ### Configuration parameters ###
-// /// 
-// /// - connection(s):           
-// ///   - discovery_key:         (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
-// ///   - protocol:              connection protocol: http or https
-// ///   - host:                  host name or IP address
-// ///   - port:                  port number
-// ///   - uri:                   resource URI or connection string with all parameters in it
-// /// - options:
-// ///   - retries:               number of retries (default: 3)
-// ///   - connect_timeout:       connection timeout in milliseconds (default: 10 sec)
-// ///   - timeout:               invocation timeout in milliseconds (default: 10 sec)
-// /// 
-// /// ### References ###
-// /// 
-// /// - \*:logger:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-// /// - \*:counters:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-// /// - \*:discovery:\*:\*:1.0        (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
-// /// 
-// /// See [[GrpcService]]
-// /// See [[CommandableHttpService]]
-// /// 
-// /// ### Example ###
-// /// 
-// ///     class MyGrpcClient extends GrpcClient implements IMyClient {
-// ///        ...
-// /// 
-// ///        public getData(String correlationId, id: string, 
-// ///            callback: (err: any, result: MyData) => void): void {
-// ///        
-// ///            let timing = this.instrument(correlationId, 'myclient.get_data');
-// ///            this.call("get_data", correlationId, { id: id }, (err, result) => {
-// ///                timing.endTiming();
-// ///                callback(err, result);
-// ///            });        
-// ///        }
-// ///        ...
-// ///     }
-// /// 
-// ///     let client = new MyGrpcClient();
-// ///     client.configure(ConfigParams.fromTuples(
-// ///         "connection.protocol", "http",
-// ///         "connection.host", "localhost",
-// ///         "connection.port", 8080
-// ///     ));
-// /// 
-// ///     client.getData("123", "1", (err, result) => {
-// ///       ...
-// ///     });
-//  
-// export abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
+/// Abstract client that calls remove endpoints using GRPC protocol.
+///
+/// ### Configuration parameters ###
+///
+/// - [connection(s)]:
+///   - [discovery_key]:         (optional) a key to retrieve the connection from [IDiscovery]
+///   - [protocol]:              connection protocol: http or https
+///   - [host]:                  host name or IP address
+///   - [port]:                  port number
+///   - [uri]:                   resource URI or connection string with all parameters in it
+/// - [options]:
+///   - [retries]:               number of retries (default: 3)
+///   - [connect_timeout]:       connection timeout in milliseconds (default: 10 sec)
+///   - [timeout]:               invocation timeout in milliseconds (default: 10 sec)
+///
+/// ### References ###
+///
+/// - *:logger:*:*:1.0         (optional) [ILogger] components to pass log messages
+/// - *:counters:*:*:1.0         (optional) [ICounters] components to pass collected measurements
+/// - *:discovery:*:*:1.0        (optional) [IDiscovery] services to resolve connection
+///
+/// See [GrpcService]
+/// See [CommandableHttpService]
+///
+/// ### Example ###
+///
+///     class MyGrpcClient extends GrpcClient implements IMyClient {
+///        ...
+///
+///        public getData(String correlationId, id: string,
+///            callback: (err: any, result: MyData) => void): void {
+///
+///            var timing = this.instrument(correlationId, 'myclient.get_data');
+///            this.call('get_data', correlationId, { id: id }, (err, result) => {
+///                timing.endTiming();
+///                callback(err, result);
+///            });
+///        }
+///        ...
+///     }
+///
+///     var client = new MyGrpcClient();
+///     client.configure(ConfigParams.fromTuples(
+///         'connection.protocol', 'http',
+///         'connection.host', 'localhost',
+///         'connection.port', 8080
+///     ));
+///
+///     client.getData('123', '1', (err, result) => {
+///       ...
+///     });
 
-//     private static readonly _defaultConfig: ConfigParams = ConfigParams.fromTuples(
-//         "connection.protocol", "http",
-//         "connection.host", "0.0.0.0",
-//         "connection.port", 3000,
+abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
+  static final _defaultConfig = ConfigParams.fromTuples([
+    'connection.protocol',
+    'http',
+    'connection.host',
+    '0.0.0.0',
+    'connection.port',
+    3000,
+    'options.request_max_size',
+    1024 * 1024,
+    'options.connect_timeout',
+    10000,
+    'options.timeout',
+    10000,
+    'options.retries',
+    3,
+    'options.debug',
+    true
+  ]);
 
-//         "options.request_max_size", 1024*1024,
-//         "options.connect_timeout", 10000,
-//         "options.timeout", 10000,
-//         "options.retries", 3,
-//         "options.debug", true
-//     );
+  String _clientName;
 
-//     private _clientType: any;
-//     private _protoPath: string;
-//     private _clientName: string;
-//     private _packageOptions: any;
+  /// The GRPC client.
+  //grpc.Client _client;
 
-//     
-//     /// The GRPC client.
-//      
-//     protected _client: any;
-//     
-//     /// The connection resolver.
-//      
-//     protected _connectionResolver: HttpConnectionResolver = new HttpConnectionResolver();
-//      
-//     /// The logger.
-//      
-//     protected _logger: CompositeLogger = new CompositeLogger();
-//      
-//     /// The performance counters.
-//      
-//     protected _counters: CompositeCounters = new CompositeCounters();
-//     
-//     /// The configuration options.
-//      
-//     protected _options: ConfigParams = new ConfigParams();
-//     
-//     /// The connection timeout in milliseconds.
-//      
-//     protected _connectTimeout: number = 10000;
-//     
-//     /// The invocation timeout in milliseconds.
-//      
-//     protected _timeout: number = 10000;
-//     
-//     /// The remote service uri which is calculated on open.
-//      
-// 	protected _uri: string;
+  /// The GRPC client chanel
+  grpc.ClientChannel _channel;
 
-//     public constructor(clientTypeOrPath: any, clientName?: string, packageOptions?: any) {
-//         this._clientType = !_.isString(clientTypeOrPath) ? clientTypeOrPath : null;
-//         this._protoPath = _.isString(clientTypeOrPath) ? clientTypeOrPath : null;
-//         this._clientName = clientName;
-//         this._packageOptions = packageOptions;
-//     }
+  /// The connection resolver.
+  final _connectionResolver = HttpConnectionResolver();
 
-//     
-//     /// Configures component by passing configuration parameters.
-//     /// 
-//     /// - config    configuration parameters to be set.
-//      
-// 	public configure(config: ConfigParams): void {
-// 		config = config.setDefaults(GrpcClient._defaultConfig);
-// 		this._connectionResolver.configure(config);
-//         this._options = this._options.override(config.getSection("options"));
+  /// The logger.
+  final _logger = CompositeLogger();
 
-//         this._connectTimeout = config.getAsIntegerWithDefault("options.connect_timeout", this._connectTimeout);
-//         this._timeout = config.getAsIntegerWithDefault("options.timeout", this._timeout);
-// 	}
-        
-//     
-// 	/// Sets references to dependent components.
-// 	/// 
-// 	/// - references 	references to locate the component dependencies. 
-//      
-// 	public setReferences(references: IReferences): void {
-// 		this._logger.setReferences(references);
-// 		this._counters.setReferences(references);
-// 		this._connectionResolver.setReferences(references);
-// 	}
+  /// The performance counters.
+  final _counters = CompositeCounters();
 
-//     
-//     /// Adds instrumentation to log calls and measure call time.
-//     /// It returns a Timing object that is used to end the time measurement.
-//     /// 
-//     /// - correlationId     (optional) transaction id to trace execution through call chain.
-//     /// - name              a method name.
-//     /// Returns Timing object to end the time measurement.
-//      
-// 	protected instrument(String correlationId, name: string): Timing {
-//         this._logger.trace(correlationId, "Executing %s method", name);
-//         this._counters.incrementOne(name + ".call_count");
-// 		return this._counters.beginTiming(name + ".call_time");
-// 	}
+  /// The configuration options.
+  var _options = ConfigParams();
 
-//     
-//     /// Adds instrumentation to error handling.
-//     /// 
-//     /// - correlationId     (optional) transaction id to trace execution through call chain.
-//     /// - name              a method name.
-//     /// - err               an occured error
-//     /// - result            (optional) an execution result
-//     /// - callback          (optional) an execution callback
-//      
-//     protected instrumentError(String correlationId, name: string, err: any,
-//         result: any = null, callback: (err: any, result: any) => void = null): void {
-//         if (err != null) {
-//             this._logger.error(correlationId, err, "Failed to call %s method", name);
-//             this._counters.incrementOne(name + '.call_errors');    
-//         }
+  /// The connection timeout in milliseconds.
+  int _connectTimeout = 10000;
 
-//         if (callback) callback(err, result);
-//     }
+  /// The invocation timeout in milliseconds.
+  int _timeout = 10000;
 
-//     
-// 	/// Checks if the component is opened.
-// 	/// 
-// 	/// Returns true if the component has been opened and false otherwise.
-//      
-// 	public isOpen(): boolean {
-// 		return this._client != null;
-// 	}
-    
-//     
-// 	/// Opens the component.
-// 	/// 
-// 	/// - correlationId 	(optional) transaction id to trace execution through call chain.
-//     /// - callback 			callback function that receives error or null no errors occured.
-//      
-// 	public open(String correlationId, callback?: (err: any) => void): void {
-//         if (this.isOpen()) {
-//             if (callback) callback(null);
-//             return;
-//         }
-    	
-// 		this._connectionResolver.resolve(correlationId, (err, connection, credential) => {
-//             if (err) {
-//                 if (callback) callback(err);
-//                 return;
-//             }
+  /// The remote service uri which is calculated on open.
+  String _uri;
 
-//             this._uri = connection.getUri();
+  GrpcClient(String clientName) {
+    _clientName = clientName;
+  }
 
-//             try {
-//                 let options: any = {};
+  /// Configures component by passing configuration parameters.
+  ///
+  /// - [config]    configuration parameters to be set.
+  @override
+  void configure(ConfigParams config) {
+    config = config.setDefaults(GrpcClient._defaultConfig);
+    _connectionResolver.configure(config);
+    _options = _options.override(config.getSection('options'));
 
-//                 if (connection.getProtocol('http') == 'https') {
-//                     let sslKeyFile = credential.getAsNullableString('ssl_key_file');
-//                     let privateKey = fs.readFileSync(sslKeyFile).toString();
-        
-//                     let sslCrtFile = credential.getAsNullableString('ssl_crt_file');
-//                     let certificate = fs.readFileSync(sslCrtFile).toString();
-        
-//                     let ca = [];
-//                     let sslCaFile = credential.getAsNullableString('ssl_ca_file');
-//                     if (sslCaFile != null) {
-//                         let caText = fs.readFileSync(sslCaFile).toString();
-//                         while (caText != null && caText.trim().length > 0) {
-//                             let crtIndex = caText.lastIndexOf('-----BEGIN CERTIFICATE-----');
-//                             if (crtIndex > -1) {
-//                                 ca.push(caText.substring(crtIndex));
-//                                 caText = caText.substring(0, crtIndex);
-//                             }
-//                         }
-//                     }
-        
-//                     options.kvpair = {
-//                         'private_key': privateKey,
-//                         'cert_chain': certificate
-//                     };
-//                     options.key = privateKey;
-//                     options.cert = certificate;
-//                     options.ca = ca;
-//                 }
-         
-//                 // Create instance of express application   
-//                 let grpc = require('grpc'); 
-                
-//                 let credentials = connection.getProtocol('http') == 'https' 
-//                     ? grpc.credentials.createSsl(options.ca, options.key, options.cert)
-//                     : grpc.credentials.createInsecure();
+    _connectTimeout = config.getAsIntegerWithDefault(
+        'options.connect_timeout', _connectTimeout);
+    _timeout = config.getAsIntegerWithDefault('options.timeout', _timeout);
+  }
 
-//                 let clientType = this._clientType;
+  /// Sets references to dependent components.
+  ///
+  /// - references 	references to locate the component dependencies.
+  @override
+  void setReferences(IReferences references) {
+    _logger.setReferences(references);
+    _counters.setReferences(references);
+    _connectionResolver.setReferences(references);
+  }
 
-//                 // Dynamically load client type
-//                 if (clientType == null) {
-//                     let protoLoader = require('@grpc/proto-loader');
-        
-//                     let options = this._packageOptions || {
-//                         keepCase: true,
-//                         longs: Number,
-//                         enums:  Number,
-//                         defaults: true,
-//                         oneofs: true
-//                     };
-        
-//                     let packageDefinition = protoLoader.loadSync(this._protoPath, options);
-//                     let packageObject = grpc.loadPackageDefinition(packageDefinition);
-//                     clientType = this.getClientByName(packageObject, this._clientName);            
-//                 } 
-//                 // Statically load client type
-//                 else {
-//                     clientType = this.getClientByName(this._clientType, this._clientName);
-//                 }
-            
-//                 this._client = new clientType(connection.getHost() + ':' + connection.getPort(), credentials);
+  /// Adds instrumentation to log calls and measure call time.
+  /// It returns a Timing object that is used to end the time measurement.
+  ///
+  /// - [correlationId]     (optional) transaction id to trace execution through call chain.
+  /// - [name]              a method name.
+  /// Returns Timing object to end the time measurement.
 
-//                 if (callback) callback(null);
-//             } catch (ex) {
-//                 this._client = null;
-//                 let err = new ConnectionException(correlationId, "CANNOT_CONNECT", "Opening GRPC client failed")
-//                     .wrap(ex).withDetails("url", this._uri);
-//                 if (callback) callback(err);
-//             }
-//         });
-		
-//     }
+  Timing instrument(String correlationId, String name) {
+    _logger.trace(correlationId, 'Executing %s method', [name]);
+    _counters.incrementOne(name + '.call_count');
+    return _counters.beginTiming(name + '.call_time');
+  }
 
-//     
-// 	/// Closes component and frees used resources.
-// 	/// 
-// 	/// - correlationId 	(optional) transaction id to trace execution through call chain.
-//     /// - callback 			callback function that receives error or null no errors occured.
-//      
-//     public close(String correlationId, callback?: (err: any) => void): void {
-//         if (this._client != null) {
-//             // Eat exceptions
-//             try {
-//                 this._logger.debug(correlationId, "Closed GRPC service at %s", this._uri);
-//             } catch (ex) {
-//                 this._logger.warn(correlationId, "Failed while closing GRPC service: %s", ex);
-//             }
+  /// Adds instrumentation to error handling.
+  ///
+  /// - [correlationId]     (optional) transaction id to trace execution through call chain.
+  /// - [name]              a method name.
+  /// - [err]               an occured error
+  /// - [reerror]           if true - throw error
+  void instrumentError(String correlationId, String name, err,
+      [bool reerror = false]) {
+    if (err != null) {
+      _logger.error(correlationId, err, 'Failed to call %s method', [name]);
+      _counters.incrementOne(name + '.call_errors');
+      if (reerror != null && reerror == true) {
+        throw err;
+      }
+    }
+  }
 
-//             this._client = null;
-//             this._uri = null;
-//         }
+  /// Checks if the component is opened.
+  ///
+  /// Returns true if the component has been opened and false otherwise.
+  @override
+  bool isOpen() {
+    return _channel != null;
+  }
 
-//         if (callback) callback(null);
-//     }
+  /// Opens the component.
+  ///
+  /// - [correlationId] 	(optional) transaction id to trace execution through call chain.
+  /// Return 			      Future that receives error or null no errors occured.
+  @override
+  Future open(String correlationId) async {
+    if (isOpen()) {
+      return null;
+    }
 
-//     private getClientByName(packageObject: any, clientName: string): any {
-//         if (packageObject == null || clientName == null)
-//             return packageObject;
+    try {
+      var connection = await _connectionResolver.resolve(correlationId);
+      _uri = connection.getUri();
 
-//         let names = clientName.split(".");
-//         for (let name of names) {
-//             packageObject = packageObject[name];
-//             if (packageObject == null) break;
-//         }
+      grpc.ChannelCredentials credentials;
+      if (connection.getProtocol('http') == 'https') {
+        var sslCaFile = connection.getAsNullableString('ssl_ca_file');
+        List<int> trustedRoot = File(sslCaFile).readAsBytesSync();
+        credentials = grpc.ChannelCredentials.secure(
+            certificates: trustedRoot, authority: connection.getHost());
+      } else {
+        credentials = const grpc.ChannelCredentials.insecure();
+      }
 
-//         return packageObject;
-//     }
+      final options = grpc.ChannelOptions(
+          credentials: credentials,
+          connectionTimeout: Duration(milliseconds: _connectTimeout),
+          idleTimeout: Duration(milliseconds: _timeout));
+      _channel = grpc.ClientChannel(connection.getHost(),
+          port: connection.getPort(), options: options);
+      //_client = CommandableClient(_channel);
+    } catch (ex) {
+      //_client = null;
+      _channel = null;
+      throw ConnectionException(
+              correlationId, 'CANNOT_CONNECT', 'Opening GRPC client failed')
+          .wrap(ex)
+          .withDetails('url', _uri);
+    }
+  }
 
-//     
-//     /// Calls a remote method via GRPC protocol.
-//     /// 
-//     /// - method            a method name to called
-//     /// - correlationId     (optional) transaction id to trace execution through call chain.
-//     /// - request           (optional) request object.
-//     /// - callback          (optional) callback function that receives result object or error.
-//      
-//     protected call(method: string, correlationId?: string, request: any = {}, 
-//         callback?: (err: any, result: any) => void): void {
-        
-//         method = method.toLowerCase();
-                
-//         if (_.isFunction(request)) {
-//             callback = request;
-//             request = {};
-//         }
-        
-//         this._client[method](request, (err, response) => {
-//             if (callback) callback(err, response);
-//         });
-//     }
-// }
+  /// Closes component and frees used resources.
+  ///
+  /// - [correlationId] 	(optional) transaction id to trace execution through call chain.
+  /// Return 			Future that receives error or null no errors occured.
+  @override
+  Future close(String correlationId) async {
+    if (_channel != null) {
+      // Eat exceptions
+      try {
+        _logger.debug(correlationId, 'Closed GRPC service at %s', [_uri]);
+      } catch (ex) {
+        _logger.warn(
+            correlationId, 'Failed while closing GRPC service: %s', ex);
+      }
+
+      //_client = null;
+      _channel = null;
+      _uri = null;
+    }
+  }
+
+  /// Calls a remote method via GRPC protocol.
+  ///
+  /// - [method]            a method name to called
+  /// - [correlationId]     (optional) transaction id to trace execution through call chain.
+  /// - [request]           (optional) request object.
+  /// Return                (optional) Future that receives result object or error.
+  Future call<Q extends GeneratedMessage, R extends GeneratedMessage>(
+      String method, String correlationId, request,
+      {grpc.CallOptions options}) async {
+    method = method.toLowerCase();
+    method = '/' + _clientName + '/' + method;
+
+    final clientMethod = grpc.ClientMethod<Q, R>(
+        method, (Q value) => value.writeToBuffer(), (List<int> value) {
+      //TODO: make a decision is it right or not?
+      R item = TypeReflector.createInstanceByType(R, []);
+      item.mergeFromBuffer(value);
+      return item;
+    });
+
+    final call = _channel.createCall(
+        clientMethod, Stream.fromIterable([request]), options);
+    return grpc.ResponseFuture(call);
+  }
+
+  /// AddFilterParams method are adds filter parameters (with the same name as they defined)
+  /// to invocation parameter map.
+  ///  - [params]        invocation parameters.
+  ///  - [filter]        (optional) filter parameters
+  /// Return invocation parameters with added filter parameters.
+  StringValueMap addFilterParams(StringValueMap params, FilterParams filter) {
+    params ??= StringValueMap();
+
+    if (filter != null) {
+      for (var k in filter.keys) {
+        params.put(k, filter[k]);
+      }
+    }
+    return params;
+  }
+
+  /// AddPagingParams method are adds paging parameters (skip, take, total) to invocation parameter map.
+  /// - [params]        invocation parameters.
+  /// - [paging]        (optional) paging parameters
+  /// Return invocation parameters with added paging parameters.
+  StringValueMap addPagingParams(StringValueMap params, PagingParams paging) {
+    params ??= StringValueMap();
+
+    if (paging != null) {
+      params.put('total', paging.total);
+      if (paging.skip != null) {
+        params.put('skip', paging.skip);
+      }
+      if (paging.take != null) {
+        params.put('take', paging.take);
+      }
+    }
+    return params;
+  }
+}

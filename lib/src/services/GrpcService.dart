@@ -75,7 +75,8 @@ import './IRegisterable.dart';
 ///        console.log('The GRPC service is running on port 8080');
 ///     });
 
-abstract class GrpcService
+//abstract class GrpcService
+mixin GrpcService
     implements
         IOpenable,
         IConfigurable,
@@ -104,8 +105,14 @@ abstract class GrpcService
   /// The performance counters.
   final counters = CompositeCounters();
 
-  GrpcService([String serviceName]) {
-    _serviceName = serviceName;
+  // GrpcService([String serviceName]) {
+  //   _serviceName = serviceName;
+  // }
+
+  /// Sets service name
+  /// - [name]  name of service
+  set serviceName(String name){
+    _serviceName = name;
   }
 
   /// Configures component by passing configuration parameters.

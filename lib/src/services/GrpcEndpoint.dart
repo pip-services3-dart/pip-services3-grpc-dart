@@ -267,7 +267,7 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   }
 
   void _registerCommandableService() {
-    if (_commandableMethods == null) return;
+    if (_commandableMethods == null || _commandableMethods.isEmpty) return;
 
     _commandableService = _CommandableMediator();
     _commandableService.invokeFunc = _invokeCommandableMethod;

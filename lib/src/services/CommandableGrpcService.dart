@@ -57,14 +57,14 @@ import './GrpcService.dart';
 ///        console.log("The GRPC service is running on port 8080");
 ///     });
 
-abstract class CommandableGrpcService extends GrpcService {
+abstract class CommandableGrpcService with GrpcService {
   String _name;
   CommandSet _commandSet;
 
   /// Creates a new instance of the service.
   ///
   /// - [name] a service name.
-  CommandableGrpcService(String name) : super(null) {
+  CommandableGrpcService(String name) {//: super(null) {
     _name = name;
     dependencyResolver.put('controller', 'none');
   }

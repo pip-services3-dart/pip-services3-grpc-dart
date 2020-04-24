@@ -1,124 +1,205 @@
-// import { IReferences, PagingParamsSchema } from 'pip-services3-commons-node';
-// import { Descriptor } from 'pip-services3-commons-node';
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
-// import { ObjectSchema } from 'pip-services3-commons-node';
-// import { TypeCode } from 'pip-services3-commons-node';
-// import { FilterParamsSchema } from 'pip-services3-commons-node';
+import 'dart:async';
+import 'dart:convert';
 
-// import { DummySchema } from '../DummySchema';
-// import { GrpcService } from '../../src/services/GrpcService';
-// import { IDummyController } from '../IDummyController';
+import 'package:grpc/grpc.dart';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
+import 'package:pip_services3_grpc/pip_services3_grpc.dart';
+import 'package:protobuf/protobuf.dart';
 
-// export class DummyGrpcService extends GrpcService {
-//     private _controller: IDummyController;
-//     private _numberOfCalls: number = 0;
-	
-//     public constructor() {
-//         super(__dirname + "../../../../test/protos/dummies.proto", "dummies.Dummies.service");
-//         this._dependencyResolver.put('controller', new Descriptor("pip-services-dummies", "controller", "default", "*", "*"));
-//     }
+import '../generated/dummies.pbgrpc.dart' as command;
 
-// 	public setReferences(references: IReferences): void {
-// 		super.setReferences(references);
-//         this._controller = this._dependencyResolver.getOneRequired<IDummyController>('controller');
-//     }
-    
-//     public getNumberOfCalls(): number {
-//         return this._numberOfCalls;
-//     }
+import '../DummySchema.dart';
+import '../Dummy.dart';
+import '../IDummyController.dart';
 
-//     private incrementNumberOfCalls(
-//         call: any, callback: (err: any, result: any) => void, next: () => void) {
-//         this._numberOfCalls++;
-//         next();
-//     }
+class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
+  IDummyController _controller;
+  int _numberOfCalls = 0;
 
-//     private getPageByFilter(call: any, callback: any) {
-//         let filter = FilterParams.fromValue(call.request.filter);
-//         let paging = PagingParams.fromValue(call.request.paging);
+  DummyGrpcService() {
+    //:super('dummies.Dummies.service') {
+    serviceName = 'dummies.Dummies.service';
+    dependencyResolver.put('controller',
+        Descriptor('pip-services-dummies', 'controller', 'default', '*', '*'));
+  }
 
-//         this._controller.getPageByFilter(
-//             call.request.correlation_id,
-//             filter,
-//             paging,
-//             callback
-//         );
-//     }
+  @override
+  void setReferences(IReferences references) {
+    super.setReferences(references);
+    _controller =
+        dependencyResolver.getOneRequired<IDummyController>('controller');
+  }
 
-//     private getOneById(call: any, callback: any) {
-//         this._controller.getOneById(
-//             call.request.correlation_id,
-//             call.request.dummy_id,
-//             (err, result) => {
-//                 callback(err, result || {});
-//             }
-//         );
-//     }
+  int getNumberOfCalls() {
+    return _numberOfCalls;
+  }
 
-//     private create(call: any, callback: any) {
-//         this._controller.create(
-//             call.request.correlation_id,
-//             call.request.dummy,
-//             callback
-//         );
-//     }
+  Future<GrpcError> _incrementNumberOfCalls(
+      ServiceCall call, ServiceMethod method) async {
+    _numberOfCalls++;
+    //return GrpcError.ok();
+    return null;
+  }
 
-//     private update(call: any, callback: any) {
-//         this._controller.update(
-//             call.request.correlation_id,
-//             call.request.dummy,
-//             callback
-//         );
-//     }
+  @override
+  void register() {
+    registerInterceptor(_incrementNumberOfCalls);
+    registerService(this);
+  }
 
-//     private deleteById(call: any, callback: any) {
-//         this._controller.deleteById(
-//             call.request.correlation_id,
-//             call.request.dummy_id,
-//             (err, result) => {
-//                 callback(err, result || {});
-//             }
-//         );
-//     }    
-        
-//     public register() {
-//         this.registerInterceptor(this.incrementNumberOfCalls);
+  @override
+  Future<command.Dummy> create_dummy(
+      ServiceCall call, command.DummyObjectRequest request) async {
+    var schema =
+        ObjectSchema(true).withRequiredProperty('dummy', DummySchema());
+    var correlationId = request.correlationId;
+    var err = schema.validateAndReturnException(correlationId, request, false);
 
-//         this.registerMethod(
-//             'get_dummies', 
-//             new ObjectSchema(true)
-//                 .withOptionalProperty("paging", new PagingParamsSchema())
-//                 .withOptionalProperty("filter", new FilterParamsSchema()),
-//             this.getPageByFilter
-//         );
+    if (err != null) {
+      throw err;
+    }
 
-//         this.registerMethod(
-//             'get_dummy_by_id', 
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy_id", TypeCode.String),
-//             this.getOneById
-//         );
+    var response = command.Dummy();
+    var timing = instrument(correlationId, 'create_dummy.call');
+    try {
+      var dummy = Dummy.fromGrpcJson(request.dummy.writeToJsonMap());
+      var result = await _controller.create(request.correlationId, dummy);
+      timing.endTiming();
+      if (result != null) {
+        response.mergeFromJsonMap(result.toGrpcJson());
+      }
+    } catch (ex) {
+      timing.endTiming();
+      var err = ApplicationException().wrap(ex);
+      instrumentError(correlationId, 'create_dummy.call', err, true);
+    }
+    return response;
+  }
 
-//         this.registerMethod(
-//             'create_dummy', 
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy", new DummySchema()),
-//             this.create
-//         );
+  @override
+  Future<command.Dummy> delete_dummy_by_id(
+      ServiceCall call, command.DummyIdRequest request) async {
+    var schema =
+        ObjectSchema(true).withRequiredProperty('dummyId', TypeCode.String);
+    var correlationId = request.correlationId;
+    var err = schema.validateAndReturnException(correlationId, request, false);
 
-//         this.registerMethod(
-//             'update_dummy', 
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy", new DummySchema()),
-//             this.update
-//         );
+    if (err != null) {
+      throw err;
+    }
+    var response = command.Dummy();
+    var timing = instrument(correlationId, 'delete_dummy_by_id.call');
+    try {
+      var result =
+          await _controller.deleteById(request.correlationId, request.dummyId);
+      timing.endTiming();
+      if (result != null) {
+        response.mergeFromJsonMap(result.toGrpcJson());
+      }
+    } catch (ex) {
+      timing.endTiming();
+      var err = ApplicationException().wrap(ex);
+      instrumentError(correlationId, 'delete_dummy_by_id.call', err, true);
+    }
+    return response;
+  }
 
-//         this.registerMethod(
-//             'delete_dummy_by_id', 
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy_id", TypeCode.String),
-//             this.deleteById
-//         );
-//     }
-// }
+  @override
+  Future<command.DummiesPage> get_dummies(
+      ServiceCall call, command.DummiesPageRequest request) async {
+    //TODO: Fix schema checks for PagingParams
+    // var schema = ObjectSchema(true)
+    //     .withOptionalProperty('paging', PagingParamsSchema())
+    //     .withOptionalProperty('filter', FilterParamsSchema());
+    var correlationId = request.correlationId;
+    // var err = schema.validateAndReturnException(correlationId, request, false);
+
+    // if (err != null) {
+    //   throw err;
+    // }
+
+    var filter = FilterParams.fromValue(request.filter);
+    var paging = PagingParams.fromValue(request.paging);
+    var response = command.DummiesPage();
+
+    var timing = instrument(correlationId, 'get_dummies.call');
+    try {
+      var result =
+          await _controller.getPageByFilter(correlationId, filter, paging);
+      var list = PbList<command.Dummy>();
+      for (var item in result.data) {
+        var cmdDummyItem = command.Dummy();
+        cmdDummyItem.mergeFromJsonMap(item.toGrpcJson());
+        list.add(cmdDummyItem);
+      }
+      timing.endTiming();
+      // Hack for set total value
+      response.total += result.total;
+      response.data.addAll(list);
+    } catch (ex) {
+      var err = ApplicationException().wrap(ex);
+      timing.endTiming();
+      instrumentError(correlationId, 'get_dummies.call', err, true);
+    }
+
+    return response;
+  }
+
+  @override
+  Future<command.Dummy> get_dummy_by_id(
+      ServiceCall call, command.DummyIdRequest request) async {
+    var schema =
+        ObjectSchema(true).withRequiredProperty('dummyId', TypeCode.String);
+    var correlationId = request.correlationId;
+    var err = schema.validateAndReturnException(correlationId, request, false);
+
+    if (err != null) {
+      throw err;
+    }
+
+    var response = command.Dummy();
+    var timing = instrument(correlationId, 'get_dummy_by_id.call');
+    try {
+      var result =
+          await _controller.getOneById(request.correlationId, request.dummyId);
+      timing.endTiming();
+      if (result != null) {
+        response.mergeFromJsonMap(result.toGrpcJson());
+      }
+    } catch (ex) {
+      var err = ApplicationException().wrap(ex);
+      timing.endTiming();
+      instrumentError(correlationId, 'get_dummy_by_id.call', err, true);
+    }
+
+    return response;
+  }
+
+  @override
+  Future<command.Dummy> update_dummy(
+      ServiceCall call, command.DummyObjectRequest request) async {
+    // 'update_dummy',
+    var schema =
+        ObjectSchema(true).withRequiredProperty('dummy', DummySchema());
+    var correlationId = request.correlationId;
+    var err = schema.validateAndReturnException(correlationId, request, false);
+
+    if (err != null) {
+      throw err;
+    }
+    var response = command.Dummy();
+    var timing = instrument(correlationId, 'update_dummy.call');
+    try {
+      var dummy = Dummy.fromGrpcJson(request.dummy.writeToJsonMap());
+      var result = await _controller.update(request.correlationId, dummy);
+      timing.endTiming();
+      response.mergeFromJsonMap(result.toGrpcJson());
+    } catch (ex) {
+      var err = ApplicationException().wrap(ex);
+      timing.endTiming();
+      instrumentError(correlationId, 'update_dummy.call', err, true);
+    }
+
+    return response;
+  }
+}
