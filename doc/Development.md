@@ -56,14 +56,19 @@ copy config/config.example.yaml config/config.yaml
 After that check all configuration options. Specifically, pay attention to connection options
 for database and dependent microservices. For more information check [Configuration Guide](Configuration.md) 
 
+
 Command to run unit tests:
 ```bash
 pub run test
 ```
+or 
+```bash
+make test
+```
 
 You can also execute benchmarks as:
 ```bash
-npm run benchmark
+pub run benchmark
 ```
 
 ## <a name="release"></a> Release

@@ -4,18 +4,18 @@
 This framework is a part of the [Pip.Services](https://github.com/pip-services/pip-services) project.
 It provides the following synchronous communication components:
 
-- **gRPC** - GRPC [services] and [clients]
+- **gRPC** - gRPC [services] and [clients]
 
 Quick Links:
 
-* [Downloads](https://github.com/pip-services-dart/pip-services-rpc-dart/blob/master/doc/Downloads.md)
-* [API Reference](https://pip-services3-dart.github.io/pip-services3-rpc-dart/globals.html)
-* [Building and Testing](https://github.com/pip-services/pip-services-rpc-dart/blob/master/doc/Development.md)
-* [Contributing](https://github.com/pip-services/pip-services-rpc-dart/blob/master/doc/Development.md/#contrib)
+* [Downloads](https://github.com/pip-services-dart/pip-services-grpc-dart/blob/master/doc/Downloads.md)
+* [API Reference](https://pub.dev/documentation/pip_services3_grpc/latest/pip_services3_grpc/pip_services3_grpc-library.html)
+* [Building and Testing](https://github.com/pip-services/pip-services-grpc-dart/blob/master/doc/Development.md)
+* [Contributing](https://github.com/pip-services/pip-services-grpc-dart/blob/master/doc/Development.md/#contrib)
 
-https://grpc.io/docs/quickstart/dart/
-https://developers.google.com/protocol-buffers/docs/darttutorial
-
+## Help links
+* [gRPC Dart Quick Start](https://grpc.io/docs/quickstart/dart/)
+* [Protocol Buffer Basics: Dart](https://developers.google.com/protocol-buffers/docs/darttutorial)
 
 ## Acknowledgements
 
