@@ -1,7 +1,7 @@
 .PHONY: test generate gendoc docview analyze format genproto
 
 test:
-	@pub run test ./test
+	@pub run test ./test --concurrency=1
 
 generate:
 	@pub run build_runner build

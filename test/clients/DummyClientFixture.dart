@@ -32,7 +32,7 @@ class DummyClientFixture {
 
     // Get all dummies
     var dummies = await _client.getDummies(
-        null, FilterParams(), PagingParams(0, 5, false));
+        '123', FilterParams(), PagingParams(0, 5, false));
     expect(dummies, isNotNull);
     expect(dummies.data.length >= 2, isTrue);
 

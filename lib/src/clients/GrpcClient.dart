@@ -243,9 +243,9 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [correlationId]     (optional) transaction id to trace execution through call chain.
   /// - [request]           (optional) request object.
   /// Return                (optional) Future that receives result object or error.
-  Future call<Q extends GeneratedMessage, R extends GeneratedMessage>(
-      String method, String correlationId, request,
-      {grpc.CallOptions options}) async {
+  grpc.ResponseFuture<R> call<Q extends GeneratedMessage, R extends GeneratedMessage>(
+      String method, String correlationId, Q request,
+      {grpc.CallOptions options}) {
     method = method.toLowerCase();
     method = '/' + _clientName + '/' + method;
 

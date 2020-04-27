@@ -15,15 +15,18 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
   Future<DataPage<Dummy>> getDummies(
       String correlationId, FilterParams filter, PagingParams paging) async {
     var request = messages.DummiesPageRequest();
+    request.correlationId = correlationId;
     if (filter != null) {
       request.filter.addAll(filter.innerValue());
     }
     if (paging != null) {
-      request.paging.total = paging.total;
-      request.paging.skip += paging.skip;
-      request.paging.take = paging.take;
+      var params = messages.PagingParams();
+      params.total = paging.total;
+      params.skip += paging.skip;
+      params.take = paging.take;
+      request.paging = params;
     }
-    messages.DummiesPage response =
+    var response =
         await call<messages.DummiesPageRequest, messages.DummiesPage>(
             'get_dummies', correlationId, request);
     instrument(correlationId, 'dummy.get_page_by_filter');
@@ -39,13 +42,13 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     var request = messages.DummyIdRequest();
     request.dummyId = dummyId;
 
-    messages.Dummy response =
+    var response =
         await call<messages.DummyIdRequest, messages.Dummy>(
             'get_dummy_by_id', correlationId, request);
 
     instrument(correlationId, 'dummy.get_one_by_id');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());
-    if (result != null && result.id == '' && result.key == '') {
+    if (result != null && (result.id == null) && result.key == null) {
       result = null;
     }
     return result;
@@ -59,13 +62,13 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     item.mergeFromJsonMap(dummy.toGrpcJson());
     request.dummy = item;
 
-    messages.Dummy response =
+    var response =
         await call<messages.DummyObjectRequest, messages.Dummy>(
             'create_dummy', correlationId, request);
 
     instrument(correlationId, 'dummy.create');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());
-    if (result != null && result.id == '' && result.key == '') {
+    if (result != null && (result.id == null) && result.key == null) {
       result = null;
     }
     return result;
@@ -79,13 +82,13 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     item.mergeFromJsonMap(dummy.toGrpcJson());
     request.dummy = item;
 
-    messages.Dummy response =
+    var response =
         await call<messages.DummyObjectRequest, messages.Dummy>(
             'update_dummy', correlationId, request);
 
     instrument(correlationId, 'dummy.update');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());
-    if (result != null && result.id == '' && result.key == '') {
+    if (result != null && (result.id == null) && result.key == null) {
       result = null;
     }
     return result;
@@ -96,13 +99,13 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     var request = messages.DummyIdRequest();
     request.dummyId = dummyId;
 
-    messages.Dummy response =
+    var response =
         await call<messages.DummyIdRequest, messages.Dummy>(
             'delete_dummy_by_id', correlationId, request);
 
     instrument(correlationId, 'dummy.delete_by_id');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());
-    if (result != null && result.id == '' && result.key == '') {
+    if (result != null && (result.id == null) && result.key == null) {
       result = null;
     }
     return result;

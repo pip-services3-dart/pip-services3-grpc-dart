@@ -41,6 +41,7 @@ class DummyCommandableGrpcClient extends CommandableGrpcClient
     return Dummy.fromJson(response);
   }
 
+@override
   Future<Dummy> updateDummy(String correlationId, Dummy dummy) async {
     var response =
         await callCommand('update_dummy', correlationId, {'dummy': dummy});

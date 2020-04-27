@@ -1,5 +1,5 @@
 # <img src="https://github.com/pip-services/pip-services/raw/master/design/Logo.png" alt="Pip.Services Logo" style="max-width:30%">
-# gRPC Calls for Dart
+# gRPC for Dart
 
 This framework is a part of the [Pip.Services](https://github.com/pip-services/pip-services) project.
 It provides the following synchronous communication components:

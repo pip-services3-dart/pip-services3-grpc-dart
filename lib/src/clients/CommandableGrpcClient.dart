@@ -82,43 +82,52 @@ class CommandableGrpcClient extends GrpcClient {
   /// Throws error.
 
   Future callCommand(String name, String correlationId, params) async {
-    var method = name + '.' + name;
+    var method = this.name + '.' + name;
     var timing = instrument(correlationId, method);
 
     var request = command.InvokeRequest();
-   
-      request.method = method;
-      request.correlationId= correlationId;
-      request.argsEmpty= params == null;
-      request.argsJson= params != null ? json.encode(params) : '';
-  
+
+    request.method = method;
+    request.correlationId = correlationId;
+    request.argsEmpty = params == null;
+    request.argsJson = params != null ? json.encode(params) : '';
 
     try {
-      command.InvokeReply response =
-          await call('invoke', correlationId, request);
+      var response = await call<command.InvokeRequest, command.InvokeReply>(
+          'invoke', correlationId, request);
       timing.endTiming();
       // Handle error response
-      if (response.error != null) {
-        var errMap = json.decode(response.error.writeToJson());
+      if (response.error != null &&
+          response.error.writeToJsonMap().isNotEmpty) {
         var err = ErrorDescription();
-        err.fromJson(errMap);
+        err.category = response.error.category;
+        err.code = response.error.code;
+        err.correlation_id = response.error.correlationId;
+        err.status = response.error.status;
+        err.message = response.error.message;
+        err.cause = response.error.cause;
+        err.stack_trace = response.error.stackTrace;
+        err.details.addAll(response.error.details);
         throw ApplicationExceptionFactory.create(err);
       }
 
       // Handle empty response
-      if (response.resultEmpty || response.resultJson == null) {
+      if (response.resultEmpty ||
+          response.resultJson == '' ||
+          response.resultJson == null) {
         return null;
       }
 
       // Handle regular response
       return json.decode(response.resultJson);
-    } catch (err) {
+    } catch (ex) {
       timing.endTiming();
-
       // Handle unexpected error
-      if (err) {
-        instrumentError(correlationId, method, err, true);
+      var err = ex;
+      if (!(ex is ApplicationException)) {
+        err = ApplicationException().wrap(ex);
       }
+      instrumentError(correlationId, method, err, true);
     }
   }
 }
