@@ -184,7 +184,11 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
       // Make registration for adds all services before create server
       _performRegistrations();
 
-      _server = grpc.Server(_services, _interceptors);
+      if (_interceptors != null && _interceptors.isNotEmpty) {
+        _server = grpc.Server(_services, _interceptors);
+      } else {
+        _server = grpc.Server(_services);
+      }
 
       if (connection.getProtocol('http') == 'https') {
         var sslKeyFile = connection.getAsNullableString('ssl_key_file');
@@ -289,11 +293,18 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
               'Method ' + method + ' was not found')
           .withDetails('method', method);
 
-      response.mergeFromJsonMap({
-        'error': ErrorDescriptionFactory.create(err),
-        'result_empty': true,
-        'result_json': null
-      });
+      var respErr = ErrorDescriptionFactory.create(err);
+      response.error = command.ErrorDescription();
+      response.error.category = respErr.category;
+      response.error.code = respErr.code;
+      response.error.correlationId = respErr.correlation_id;
+      response.error.status = respErr.status;
+      response.error.message = respErr.message;
+      response.error.cause = respErr.cause;
+      response.error.stackTrace = respErr.stack_trace;
+      response.error.details.addAll(respErr.details);
+      response.resultEmpty = true;
+      response.resultJson = '';
 
       return response;
     }
@@ -314,18 +325,23 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
       // Call command action
       try {
         var result = await action(correlationId, args);
-        response.mergeFromJsonMap({
-          'error': null,
-          'result_empty': result == null,
-          'result_json': result != null ? json.encode(result) : null
-        });
+        response.error = command.ErrorDescription().createEmptyInstance();
+        response.resultEmpty = result == null;
+        response.resultJson = result != null ? json.encode(result) : '';
       } catch (err) {
         // Process result and generate response
-        response.mergeFromJsonMap({
-          'error': ErrorDescriptionFactory.create(err),
-          'result_empty': true,
-          'result_json': null
-        });
+        var respErr = ErrorDescriptionFactory.create(err);
+        response.error = command.ErrorDescription();
+        response.error.category = respErr.category;
+        response.error.code = respErr.code;
+        response.error.correlationId = respErr.correlation_id;
+        response.error.status = respErr.status;
+        response.error.message = respErr.message;
+        response.error.cause = respErr.cause;
+        response.error.stackTrace = respErr.stack_trace;
+        response.error.details.addAll(respErr.details);
+        response.resultEmpty = true;
+        response.resultJson = '';
       }
     } catch (ex) {
       // Handle unexpected exception
@@ -333,12 +349,18 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
               correlationId, 'METHOD_FAILED', 'Method ' + method + ' failed')
           .wrap(ex)
           .withDetails('method', method);
-
-      response.mergeFromJsonMap({
-        'error': ErrorDescriptionFactory.create(err),
-        'result_empty': true,
-        'result_json': null
-      });
+      var respErr = ErrorDescriptionFactory.create(err);
+      response.error = command.ErrorDescription();
+      response.error.category = respErr.category;
+      response.error.code = respErr.code;
+      response.error.correlationId = respErr.correlation_id;
+      response.error.status = respErr.status;
+      response.error.message = respErr.message;
+      response.error.cause = respErr.cause;
+      response.error.stackTrace = respErr.stack_trace;
+      response.error.details.addAll(respErr.details);
+      response.resultEmpty = true;
+      response.resultJson = '';
     }
     return response;
   }

@@ -105,10 +105,6 @@ mixin GrpcService
   /// The performance counters.
   final counters = CompositeCounters();
 
-  // GrpcService([String serviceName]) {
-  //   _serviceName = serviceName;
-  // }
-
   /// Sets service name
   /// - [name]  name of service
   set serviceName(String name){
@@ -237,7 +233,7 @@ mixin GrpcService
 
   /// Closes component and frees used resources.
   ///
-  /// - correlationId 	(optional) transaction id to trace execution through call chain.
+  /// - [correlationId] 	(optional) transaction id to trace execution through call chain.
   /// Return 			      Future that receives error or null no errors occured.
   @override
   Future close(String correlationId) async {

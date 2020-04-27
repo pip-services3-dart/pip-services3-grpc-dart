@@ -1,71 +1,61 @@
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
-// import { DataPage } from 'pip-services3-commons-node';
+import 'dart:async';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// import { CommandableGrpcClient } from '../../src/clients/CommandableGrpcClient';
-// import { IDummyClient } from './IDummyClient';
-// import { Dummy } from '../Dummy';
+import 'package:pip_services3_grpc/src/clients/CommandableGrpcClient.dart';
+import './IDummyClient.dart';
+import '../Dummy.dart';
 
-// export class DummyCommandableGrpcClient extends CommandableGrpcClient implements IDummyClient {
-        
-//     public constructor() {
-//         super('dummy');
-//     }
+class DummyCommandableGrpcClient extends CommandableGrpcClient
+    implements IDummyClient {
+  DummyCommandableGrpcClient() : super('dummy');
 
-//     public getDummies(String correlationId, filter: FilterParams, paging: PagingParams, callback: (err: any, result: DataPage<Dummy>) => void): void {
-//         this.callCommand(
-//             'get_dummies', 
-//             correlationId, 
-//             {
-//                 filter: filter,
-//                 paging: paging
-//             },
-//             callback
-//         );
-//     }
+  @override
+  Future<DataPage<Dummy>> getDummies(
+      String correlationId, FilterParams filter, PagingParams paging) async {
+    var response = await callCommand(
+        'get_dummies', correlationId, {'filter': filter, 'paging': paging});
+    if (response == null) {
+      return null;
+    }
+    return DataPage<Dummy>.fromJson(response, (item) => Dummy.fromJson(item));
+  }
 
-//     public getDummyById(String correlationId, dummyId: string, callback: (err: any, result: Dummy) => void): void {
-//         this.callCommand(
-//             'get_dummy_by_id', 
-//             correlationId,
-//             {
-//                 dummy_id: dummyId
-//             }, 
-//             callback
-//         );        
-//     }
+  @override
+  Future<Dummy> getDummyById(String correlationId, String dummyId) async {
+    var response = await callCommand(
+        'get_dummy_by_id', correlationId, {'dummy_id': dummyId});
 
-//     public createDummy(String correlationId, dummy: any, callback: (err: any, result: Dummy) => void): void {
-//         this.callCommand(
-//             'create_dummy',
-//             correlationId,
-//             {
-//                 dummy: dummy
-//             }, 
-//             callback
-//         );
-//     }
+    if (response == null) {
+      return null;
+    }
+    return Dummy.fromJson(response);
+  }
 
-//     public updateDummy(String correlationId, dummy: any, callback: (err: any, result: Dummy) => void): void {
-//         this.callCommand(
-//             'update_dummy',
-//             correlationId,
-//             {
-//                 dummy: dummy
-//             }, 
-//             callback
-//         );
-//     }
+  @override
+  Future<Dummy> createDummy(String correlationId, Dummy dummy) async {
+    var response =
+        await callCommand('create_dummy', correlationId, {'dummy': dummy});
+    if (response == null) {
+      return null;
+    }
+    return Dummy.fromJson(response);
+  }
 
-//     public deleteDummy(String correlationId, dummyId: string, callback: (err: any, result: Dummy) => void): void {
-//         this.callCommand(
-//             'delete_dummy',
-//             correlationId, 
-//             {
-//                 dummy_id: dummyId
-//             },
-//             callback
-//         );
-//     }
-  
-// }
+  Future<Dummy> updateDummy(String correlationId, Dummy dummy) async {
+    var response =
+        await callCommand('update_dummy', correlationId, {'dummy': dummy});
+    if (response == null) {
+      return null;
+    }
+    return Dummy.fromJson(response);
+  }
+
+  Future<Dummy> deleteDummy(String correlationId, String dummyId) async {
+    var response =
+        await callCommand('delete_dummy', correlationId, {'dummy_id': dummyId});
+    if (response == null) {
+      return null;
+    }
+    return Dummy.fromJson(response);
+  }
+}

@@ -86,12 +86,12 @@ class CommandableGrpcClient extends GrpcClient {
     var timing = instrument(correlationId, method);
 
     var request = command.InvokeRequest();
-    request.mergeFromJsonMap({
-      'method': method,
-      'correlation_id': correlationId,
-      'args_empty': params == null,
-      'args_json': params != null ? json.encode(params) : null
-    });
+   
+      request.method = method;
+      request.correlationId= correlationId;
+      request.argsEmpty= params == null;
+      request.argsJson= params != null ? json.encode(params) : '';
+  
 
     try {
       command.InvokeReply response =

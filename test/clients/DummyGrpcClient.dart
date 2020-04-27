@@ -1,102 +1,110 @@
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
-// import { DataPage } from 'pip-services3-commons-node';
+import 'dart:async';
 
-// import { GrpcClient } from '../../src/clients/GrpcClient';
-// import { IDummyClient } from './IDummyClient';
-// import { Dummy } from '../Dummy';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// export class DummyGrpcClient extends GrpcClient implements IDummyClient {
-        
-//     public constructor() {
-//         super(__dirname + "../../../../test/protos/dummies.proto", "dummies.Dummies")
-//     }
+import '../generated/dummies.pbgrpc.dart' as messages;
 
-//     public getDummies(String correlationId, filter: FilterParams, paging: PagingParams,
-//         callback: (err: any, result: DataPage<Dummy>) => void): void {
-//         this.call('get_dummies',
-//             correlationId, 
-//             { 
-//                 filter: filter,
-//                 paging: paging
-//             },
-//             (err, result) => {
-//                 this.instrument(correlationId, 'dummy.get_page_by_filter');
-//                 callback(err, result);
-//             }
-//         );
-//     }
+import 'package:pip_services3_grpc/src/clients/GrpcClient.dart';
+import './IDummyClient.dart';
+import '../Dummy.dart';
 
-//     public getDummyById(String correlationId, dummyId: string,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call('get_dummy_by_id',
-//             correlationId,
-//             {
-//                 dummy_id: dummyId
-//             }, 
-//             (err, result) => {
-//                 this.instrument(correlationId, 'dummy.get_one_by_id');
+class DummyGrpcClient extends GrpcClient implements IDummyClient {
+  DummyGrpcClient() : super('dummies.Dummies');
 
-//                 if (result && result.id == "" && result.key == "")
-//                     result = null;
+  @override
+  Future<DataPage<Dummy>> getDummies(
+      String correlationId, FilterParams filter, PagingParams paging) async {
+    var request = messages.DummiesPageRequest();
+    if (filter != null) {
+      request.filter.addAll(filter.innerValue());
+    }
+    if (paging != null) {
+      request.paging.total = paging.total;
+      request.paging.skip += paging.skip;
+      request.paging.take = paging.take;
+    }
+    messages.DummiesPage response =
+        await call<messages.DummiesPageRequest, messages.DummiesPage>(
+            'get_dummies', correlationId, request);
+    instrument(correlationId, 'dummy.get_page_by_filter');
+    var items = <Dummy>[];
+    for (var item in response.data) {
+      items.add(Dummy.fromGrpcJson(item.writeToJsonMap()));
+    }
+    return DataPage(items, response.total.toInt());
+  }
 
-//                 callback(err, result);
-//             }
-//         );        
-//     }
+  @override
+  Future<Dummy> getDummyById(String correlationId, String dummyId) async {
+    var request = messages.DummyIdRequest();
+    request.dummyId = dummyId;
 
-//     public createDummy(String correlationId, dummy: any,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call('create_dummy',
-//             correlationId,
-//             {
-//                 dummy: dummy
-//             }, 
-//             (err, result) => {
-//                 this.instrument(correlationId, 'dummy.create');
+    messages.Dummy response =
+        await call<messages.DummyIdRequest, messages.Dummy>(
+            'get_dummy_by_id', correlationId, request);
 
-//                 if (result && result.id == "" && result.key == "")
-//                     result = null;
+    instrument(correlationId, 'dummy.get_one_by_id');
+    var result = Dummy.fromGrpcJson(response.writeToJsonMap());
+    if (result != null && result.id == '' && result.key == '') {
+      result = null;
+    }
+    return result;
+  }
 
-//                 callback(err, result);
-//             }
-//         );
-//     }
+  @override
+  Future<Dummy> createDummy(String correlationId, Dummy dummy) async {
+    var request = messages.DummyObjectRequest();
+    request.correlationId = correlationId;
+    var item = messages.Dummy();
+    item.mergeFromJsonMap(dummy.toGrpcJson());
+    request.dummy = item;
 
-//     public updateDummy(String correlationId, dummy: any,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call('update_dummy',
-//             correlationId, 
-//             {
-//                 dummy: dummy
-//             }, 
-//             (err, result) => {
-//                 this.instrument(correlationId, 'dummy.update');
+    messages.Dummy response =
+        await call<messages.DummyObjectRequest, messages.Dummy>(
+            'create_dummy', correlationId, request);
 
-//                 if (result && result.id == "" && result.key == "")
-//                     result = null;
+    instrument(correlationId, 'dummy.create');
+    var result = Dummy.fromGrpcJson(response.writeToJsonMap());
+    if (result != null && result.id == '' && result.key == '') {
+      result = null;
+    }
+    return result;
+  }
 
-//                 callback(err, result);
-//             }
-//         );
-//     }
+  @override
+  Future<Dummy> updateDummy(String correlationId, Dummy dummy) async {
+    var request = messages.DummyObjectRequest();
+    request.correlationId = correlationId;
+    var item = messages.Dummy();
+    item.mergeFromJsonMap(dummy.toGrpcJson());
+    request.dummy = item;
 
-//     public deleteDummy(String correlationId, dummyId: string,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call('delete_dummy_by_id',
-//             correlationId, 
-//             {
-//                 dummy_id: dummyId
-//             }, 
-//             (err, result) => {
-//                 this.instrument(correlationId, 'dummy.delete_by_id');
+    messages.Dummy response =
+        await call<messages.DummyObjectRequest, messages.Dummy>(
+            'update_dummy', correlationId, request);
 
-//                 if (result && result.id == "" && result.key == "")
-//                     result = null;
+    instrument(correlationId, 'dummy.update');
+    var result = Dummy.fromGrpcJson(response.writeToJsonMap());
+    if (result != null && result.id == '' && result.key == '') {
+      result = null;
+    }
+    return result;
+  }
 
-//                 callback(err, result);
-//             }
-//         );
-//     }
-  
-// }
+  @override
+  Future<Dummy> deleteDummy(String correlationId, String dummyId) async {
+    var request = messages.DummyIdRequest();
+    request.dummyId = dummyId;
+
+    messages.Dummy response =
+        await call<messages.DummyIdRequest, messages.Dummy>(
+            'delete_dummy_by_id', correlationId, request);
+
+    instrument(correlationId, 'dummy.delete_by_id');
+    var result = Dummy.fromGrpcJson(response.writeToJsonMap());
+    if (result != null && result.id == '' && result.key == '') {
+      result = null;
+    }
+    return result;
+  }
+}

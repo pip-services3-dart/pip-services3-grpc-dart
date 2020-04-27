@@ -249,6 +249,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
     method = method.toLowerCase();
     method = '/' + _clientName + '/' + method;
 
+    final _options = grpc.CallOptions();
     final clientMethod = grpc.ClientMethod<Q, R>(
         method, (Q value) => value.writeToBuffer(), (List<int> value) {
       //TODO: make a decision is it right or not?
@@ -258,7 +259,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
     });
 
     final call = _channel.createCall(
-        clientMethod, Stream.fromIterable([request]), options);
+        clientMethod, Stream.fromIterable([request]), _options.mergedWith(options));
     return grpc.ResponseFuture(call);
   }
 
