@@ -1,6 +1,6 @@
 {
-    "name": "pip-services3-grpc-node",
+    "name": "pip-services3-grpc-dart",
     "registry": "pipdevs",
-    "version": "3.0.1",
-    "build": 5
+    "version": "1.0.0",
+    "build": 0
 }

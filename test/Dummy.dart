@@ -6,15 +6,17 @@ class Dummy implements IStringIdentifiable, ICloneable {
   String key;
   String content;
 
-  Dummy({String id, String key, String content}):
-  id = id, key= key, content=content;
+  Dummy({String id, String key, String content})
+      : id = id,
+        key = key,
+        content = content;
 
   factory Dummy.fromJson(Map<String, dynamic> json) {
-    return Dummy(id:json['id'], key:json['key'], content:json['content']);
+    return Dummy(id: json['id'], key: json['key'], content: json['content']);
   }
 
   factory Dummy.fromGrpcJson(Map<String, dynamic> json) {
-    return Dummy(id:json['1'], key:json['2'], content:json['3']);
+    return Dummy(id: json['1'], key: json['2'], content: json['3']);
   }
 
   Map<String, dynamic> toJson() {
@@ -40,6 +42,6 @@ class Dummy implements IStringIdentifiable, ICloneable {
 
   @override
   Dummy clone() {
-    return Dummy(id:id, key:key, content:content);
+    return Dummy(id: id, key: key, content: content);
   }
 }

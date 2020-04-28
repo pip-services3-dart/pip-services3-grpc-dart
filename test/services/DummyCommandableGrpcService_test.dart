@@ -61,8 +61,8 @@ void main() {
       channel = grpc.ClientChannel('localhost', port: port, options: options);
       client = command.CommandableClient(channel);
 
-      _dummy1 = Dummy(id:'', key:'Key 1', content:'Content 1');
-      _dummy2 = Dummy(id:'', key:'Key 2', content:'Content 2');
+      _dummy1 = Dummy(id: '', key: 'Key 1', content: 'Content 1');
+      _dummy2 = Dummy(id: '', key: 'Key 2', content: 'Content 2');
     });
 
     test('CRUD Operations', () async {
