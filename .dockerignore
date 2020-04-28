@@ -7,5 +7,5 @@
 /docker
 /*.sh
 /*.ps1
-/.packages
-/pubspec.lock
+/*.md
+/example

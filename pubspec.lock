@@ -142,7 +142,7 @@ packages:
     source: hosted
     version: "5.1.0"
   fixnum:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: fixnum
       url: "https://pub.dartlang.org"
