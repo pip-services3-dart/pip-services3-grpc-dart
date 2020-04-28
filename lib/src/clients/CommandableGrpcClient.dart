@@ -7,13 +7,13 @@ import '../generated/commandable.pbgrpc.dart' as command;
 
 /// Abstract client that calls commandable GRPC service.
 ///
-/// Commandable services are generated automatically for [[https://rawgit.com/pip-services-node/pip-services3-commons-node/master/doc/api/interfaces/commands.icommandable.html ICommandable objects]].
+/// Commandable services are generated automatically for [ICommandable objects].
 /// Each command is exposed as Invoke method that receives all parameters as args.
 ///
 /// ### Configuration parameters ###
 ///
 /// - [connection(s)]:
-///   - [discovery_key]:         (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
+///   - [discovery_key]:         (optional) a key to retrieve the connection from [IDiscovery]
 ///   - [protocol]:              connection protocol: http or https
 ///   - [host]:                  host name or IP address
 ///   - [port]:                  port number
@@ -25,50 +25,48 @@ import '../generated/commandable.pbgrpc.dart' as command;
 ///
 /// ### References ###
 ///
-/// - *:logger:*:*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-/// - *:counters:*:*:1.0         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-/// - *:discovery:*:*:1.0        (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
+/// - *:logger:*:*:1.0         (optional) [ILogger] components to pass log messages
+/// - *:counters:*:*:1.0         (optional) [ICounters] components to pass collected measurements
+/// - *:discovery:*:*:1.0        (optional) [IDiscovery] services to resolve connection
 ///
 /// ### Example ###
 ///
 ///     class MyCommandableGrpcClient extends CommandableGrpcClient implements IMyClient {
 ///        ...
 ///
-///         public getData(String correlationId, id: string,
-///            callback: (err: any, result: MyData) => void): void {
+///         Future<MyData> getData(String correlationId, String id) async {
 ///
-///            this.callCommand(
+///            var result = await callCommand(
 ///                'get_data',
 ///                correlationId,
-///                { id: id },
-///                (err, result) => {
-///                    callback(err, result);
-///                }
+///                { 'id': id }
 ///             );
+///            var item = MyData()
+///            item.fromJson(result);
+///            return item;
 ///         }
 ///         ...
 ///     }
 ///
-///     var client = new MyCommandableGrpcClient();
-///     client.configure(ConfigParams.fromTuples(
+///     var client = MyCommandableGrpcClient();
+///     client.configure(ConfigParams.fromTuples([
 ///         'connection.protocol', 'http',
 ///         'connection.host', 'localhost',
 ///         'connection.port', 8080
-///     ));
+///     ]));
 ///
-///     client.getData('123', '1', (err, result) => {
+///     var item = await client.getData('123', '1')
 ///     ...
-///     });
 
 class CommandableGrpcClient extends GrpcClient {
   /// The service name
-  String name;
+  String _serviceName;
 
   /// Creates a new instance of the client.
   ///
   /// - [name]     a service name.
   CommandableGrpcClient(String name) : super('commandable.Commandable') {
-    this.name = name;
+    _serviceName = name;
   }
 
   /// Calls a remote method via GRPC commadable protocol.
@@ -82,7 +80,7 @@ class CommandableGrpcClient extends GrpcClient {
   /// Throws error.
 
   Future callCommand(String name, String correlationId, params) async {
-    var method = this.name + '.' + name;
+    var method = _serviceName + '.' + name;
     var timing = instrument(correlationId, method);
 
     var request = command.InvokeRequest();

@@ -42,9 +42,8 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     var request = messages.DummyIdRequest();
     request.dummyId = dummyId;
 
-    var response =
-        await call<messages.DummyIdRequest, messages.Dummy>(
-            'get_dummy_by_id', correlationId, request);
+    var response = await call<messages.DummyIdRequest, messages.Dummy>(
+        'get_dummy_by_id', correlationId, request);
 
     instrument(correlationId, 'dummy.get_one_by_id');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());
@@ -62,9 +61,8 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     item.mergeFromJsonMap(dummy.toGrpcJson());
     request.dummy = item;
 
-    var response =
-        await call<messages.DummyObjectRequest, messages.Dummy>(
-            'create_dummy', correlationId, request);
+    var response = await call<messages.DummyObjectRequest, messages.Dummy>(
+        'create_dummy', correlationId, request);
 
     instrument(correlationId, 'dummy.create');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());
@@ -82,9 +80,8 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     item.mergeFromJsonMap(dummy.toGrpcJson());
     request.dummy = item;
 
-    var response =
-        await call<messages.DummyObjectRequest, messages.Dummy>(
-            'update_dummy', correlationId, request);
+    var response = await call<messages.DummyObjectRequest, messages.Dummy>(
+        'update_dummy', correlationId, request);
 
     instrument(correlationId, 'dummy.update');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());
@@ -99,9 +96,8 @@ class DummyGrpcClient extends GrpcClient implements IDummyClient {
     var request = messages.DummyIdRequest();
     request.dummyId = dummyId;
 
-    var response =
-        await call<messages.DummyIdRequest, messages.Dummy>(
-            'delete_dummy_by_id', correlationId, request);
+    var response = await call<messages.DummyIdRequest, messages.Dummy>(
+        'delete_dummy_by_id', correlationId, request);
 
     instrument(correlationId, 'dummy.delete_by_id');
     var result = Dummy.fromGrpcJson(response.writeToJsonMap());

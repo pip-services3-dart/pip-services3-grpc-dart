@@ -3,7 +3,7 @@ import 'package:pip_services3_commons/pip_services3_commons.dart';
 import './GrpcService.dart';
 
 /// Abstract service that receives commands via GRPC protocol
-/// to operations automatically generated for commands defined in [[https://rawgit.com/pip-services-node/pip-services3-commons-node/master/doc/api/interfaces/commands.icommandable.html ICommandable components]].
+/// to operations automatically generated for commands defined in [ICommandable components].
 /// Each command is exposed as invoke method that receives command name and parameters.
 ///
 /// Commandable services require only 3 lines of code to implement a robust external
@@ -15,7 +15,7 @@ import './GrpcService.dart';
 ///   - [endpoint]:              override for HTTP Endpoint dependency
 ///   - [controller]:            override for Controller dependency
 /// - [connection(s)]:
-///   - [discovery_key]:         (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
+///   - [discovery_key]:         (optional) a key to retrieve the connection from [IDiscovery]
 ///   - [protocol]:              connection protocol: http or https
 ///   - [host]:                  host name or IP address
 ///   - [port]:                  port number
@@ -34,28 +34,27 @@ import './GrpcService.dart';
 /// ### Example ###
 ///
 ///     class MyCommandableGrpcService extends CommandableGrpcService {
-///        public constructor() {
-///           base();
-///           this._dependencyResolver.put(
+///        MyCommandableGrpcService():super('mydata') {
+///           _dependencyResolver.put(
 ///               "controller",
-///               new Descriptor("mygroup","controller","*","*","1.0")
+///               Descriptor("mygroup","controller","*","*","1.0")
 ///           );
 ///        }
 ///     }
 ///
-///     let service = new MyCommandableGrpcService();
-///     service.configure(ConfigParams.fromTuples(
+///     var service = MyCommandableGrpcService();
+///     service.configure(ConfigParams.fromTuples([
 ///         "connection.protocol", "http",
 ///         "connection.host", "localhost",
 ///         "connection.port", 8080
-///     ));
-///     service.setReferences(References.fromTuples(
-///        new Descriptor("mygroup","controller","default","default","1.0"), controller
-///     ));
+///     ]));
+///     service.setReferences(References.fromTuples([
+///         Descriptor("mygroup","controller","default","default","1.0"), controller
+///     ]));
 ///
-///     service.open("123", (err) => {
-///        console.log("The GRPC service is running on port 8080");
-///     });
+///     await service.open("123");
+///     print("The GRPC service is running on port 8080");
+///
 
 abstract class CommandableGrpcService with GrpcService {
   String _name;
@@ -64,12 +63,13 @@ abstract class CommandableGrpcService with GrpcService {
   /// Creates a new instance of the service.
   ///
   /// - [name] a service name.
-  CommandableGrpcService(String name) {//: super(null) {
+  CommandableGrpcService(String name) {
     _name = name;
     dependencyResolver.put('controller', 'none');
   }
 
-  /// Registers all service routes in HTTP endpoint.
+  /// Registers all service routes in gRPC endpoint.
+  /// Call automaticaly in open component procedure
   @override
   void register() {
     var controller =

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:grpc/grpc.dart';
 import 'package:pip_services3_commons/pip_services3_commons.dart';
@@ -17,7 +16,6 @@ class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
   int _numberOfCalls = 0;
 
   DummyGrpcService() {
-    //:super('dummies.Dummies.service') {
     serviceName = 'dummies.Dummies.service';
     dependencyResolver.put('controller',
         Descriptor('pip-services-dummies', 'controller', 'default', '*', '*'));

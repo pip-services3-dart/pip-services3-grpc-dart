@@ -6,3 +6,6 @@
 /config/config.json
 /config/config.yaml
 /data/dummies.json
+/.dart_tool
+/.packages
+/pubspec.lock

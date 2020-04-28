@@ -14,7 +14,7 @@ import './IRegisterable.dart';
 ///   - [endpoint]:              override for GRPC Endpoint dependency
 ///   - [controller]:            override for Controller dependency
 /// - [connection(s)]:
-///   - [discovery_key]:         (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
+///   - [discovery_key]:         (optional) a key to retrieve the connection from [IDiscovery]
 ///   - [protocol]:              connection protocol: http or https
 ///   - [host]:                  host name or IP address
 ///   - [port]:                  port number
@@ -26,56 +26,60 @@ import './IRegisterable.dart';
 ///
 /// ### References ###
 ///
-/// - \*:logger:\*:\*:1.0               (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-/// - \*:counters:\*:\*:1.0             (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-/// - \*:discovery:\*:\*:1.0            (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
-/// - \*:endpoint:grpc:\*:1.0           (optional) [[GrpcEndpoint]] reference
+/// - \*:logger:\*:\*:1.0               (optional) [ILogger] components to pass log messages
+/// - \*:counters:\*:\*:1.0             (optional) [ICounters] components to pass collected measurements
+/// - \*:discovery:\*:\*:1.0            (optional) [IDiscovery] services to resolve connection
+/// - \*:endpoint:grpc:\*:1.0           (optional) [GrpcEndpoint] reference
 ///
 /// See [GrpcClient]
 ///
 /// ### Example ###
 ///
-///     class MyGrpcService extends GrpcService {
-///        private _controller: IMyController;
+///     class MyGrpcService extends MyDataGrpcServiceBase with GrpcService {
+///         IMyController _controller;
 ///        ...
-///        public constructor() {
-///           base('... path to proto ...', '.. service name ...');
-///           this.dependencyResolver.put(
+///        MyGrpcService() {
+///           serviceName = '.. service name ...';
+///           dependencyResolver.put(
 ///               'controller',
-///               new Descriptor('mygroup','controller','*','*','1.0')
+///               Descriptor('mygroup','controller','*','*','1.0')
 ///           );
 ///        }
 ///
-///        public setReferences(references: IReferences): void {
+///        void setReferences(IReferences references) {
 ///           base.setReferences(references);
-///           this._controller = this.dependencyResolver.getRequired<IMyController>('controller');
+///           _controller = dependencyResolver.getRequired<IMyController>('controller');
 ///        }
 ///
-///        public register(): void {
-///            registerMethod('get_mydata', null, (call, callback) => {
-///                let correlationId = call.request.correlationId;
-///                let id = call.request.id;
-///                this._controller.getMyData(correlationId, id, callback);
+///        public register() {
+///            registerInterceptor(_incrementNumberOfCalls);
+///            registerService(this);
+///         }
+///           Future<grpcService.MyData> getMyData(ServiceCall call, grpcService.MyDataIdRequest request) async{
+///                var correlationId = request.correlationId;
+///                var id = request.id;
+///                var result = await_controller.getMyData(correlationId, id);
+///                var item = grpcService.MyData();
+///                // ... convert MyData -> grpcService.MyData
+///                return item;
 ///            });
 ///            ...
 ///        }
 ///     }
 ///
-///     let service = new MyGrpcService();
-///     service.configure(ConfigParams.fromTuples(
+///     var service = MyGrpcService();
+///     service.configure(ConfigParams.fromTuples([
 ///         'connection.protocol', 'http',
 ///         'connection.host', 'localhost',
 ///         'connection.port', 8080
-///     ));
-///     service.setReferences(References.fromTuples(
-///        new Descriptor('mygroup','controller','default','default','1.0'), controller
-///     ));
+///     ]));
+///     service.setReferences(References.fromTuples([
+///         Descriptor('mygroup','controller','default','default','1.0'), controller
+///     ]));
 ///
-///     service.open('123', (err) => {
-///        console.log('The GRPC service is running on port 8080');
-///     });
+///     await service.open('123')
+///     print ('The GRPC service is running on port 8080');
 
-//abstract class GrpcService
 mixin GrpcService
     implements
         IOpenable,
@@ -107,7 +111,7 @@ mixin GrpcService
 
   /// Sets service name
   /// - [name]  name of service
-  set serviceName(String name){
+  set serviceName(String name) {
     _serviceName = name;
   }
 
@@ -142,7 +146,6 @@ mixin GrpcService
       _localEndpoint = false;
     }
     // Add registration callback to the endpoint
-    //endpoint.register(_registerable);
     endpoint.register(this);
   }
 
@@ -158,15 +161,12 @@ mixin GrpcService
 
   GrpcEndpoint _createEndpoint() {
     var endpoint = GrpcEndpoint();
-
     if (_config != null) {
       endpoint.configure(_config);
     }
-
     if (_references != null) {
       endpoint.setReferences(_references);
     }
-
     return endpoint;
   }
 
@@ -176,7 +176,6 @@ mixin GrpcService
   /// - [correlationId]     (optional) transaction id to trace execution through call chain.
   /// - [name]              a method name.
   /// Returns Timing object to end the time measurement.
-
   Timing instrument(String correlationId, String name) {
     logger.trace(correlationId, 'Executing %s method', [name]);
     counters.incrementOne(name + '.exec_count');
@@ -280,7 +279,7 @@ mixin GrpcService
     }
   }
 
-  /// Registers all service routes in HTTP endpoint.
+  /// Registers all service routes in Grpc endpoint.
   ///
   /// This method is called by the service and must be overriden
   /// in child classes.

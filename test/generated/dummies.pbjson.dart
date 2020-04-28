@@ -10,12 +10,25 @@ const ErrorDescription$json = const {
   '2': const [
     const {'1': 'category', '3': 1, '4': 1, '5': 9, '10': 'category'},
     const {'1': 'code', '3': 2, '4': 1, '5': 9, '10': 'code'},
-    const {'1': 'correlation_id', '3': 3, '4': 1, '5': 9, '10': 'correlationId'},
+    const {
+      '1': 'correlation_id',
+      '3': 3,
+      '4': 1,
+      '5': 9,
+      '10': 'correlationId'
+    },
     const {'1': 'status', '3': 4, '4': 1, '5': 9, '10': 'status'},
     const {'1': 'message', '3': 5, '4': 1, '5': 9, '10': 'message'},
     const {'1': 'cause', '3': 6, '4': 1, '5': 9, '10': 'cause'},
     const {'1': 'stack_trace', '3': 7, '4': 1, '5': 9, '10': 'stackTrace'},
-    const {'1': 'details', '3': 8, '4': 3, '5': 11, '6': '.dummies.ErrorDescription.DetailsEntry', '10': 'details'},
+    const {
+      '1': 'details',
+      '3': 8,
+      '4': 3,
+      '5': 11,
+      '6': '.dummies.ErrorDescription.DetailsEntry',
+      '10': 'details'
+    },
   ],
   '3': const [ErrorDescription_DetailsEntry$json],
 };
@@ -51,16 +64,43 @@ const DummiesPage$json = const {
   '1': 'DummiesPage',
   '2': const [
     const {'1': 'total', '3': 1, '4': 1, '5': 3, '10': 'total'},
-    const {'1': 'data', '3': 2, '4': 3, '5': 11, '6': '.dummies.Dummy', '10': 'data'},
+    const {
+      '1': 'data',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.dummies.Dummy',
+      '10': 'data'
+    },
   ],
 };
 
 const DummiesPageRequest$json = const {
   '1': 'DummiesPageRequest',
   '2': const [
-    const {'1': 'correlation_id', '3': 1, '4': 1, '5': 9, '10': 'correlationId'},
-    const {'1': 'filter', '3': 2, '4': 3, '5': 11, '6': '.dummies.DummiesPageRequest.FilterEntry', '10': 'filter'},
-    const {'1': 'paging', '3': 3, '4': 1, '5': 11, '6': '.dummies.PagingParams', '10': 'paging'},
+    const {
+      '1': 'correlation_id',
+      '3': 1,
+      '4': 1,
+      '5': 9,
+      '10': 'correlationId'
+    },
+    const {
+      '1': 'filter',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.dummies.DummiesPageRequest.FilterEntry',
+      '10': 'filter'
+    },
+    const {
+      '1': 'paging',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.dummies.PagingParams',
+      '10': 'paging'
+    },
   ],
   '3': const [DummiesPageRequest_FilterEntry$json],
 };
@@ -77,7 +117,13 @@ const DummiesPageRequest_FilterEntry$json = const {
 const DummyIdRequest$json = const {
   '1': 'DummyIdRequest',
   '2': const [
-    const {'1': 'correlation_id', '3': 1, '4': 1, '5': 9, '10': 'correlationId'},
+    const {
+      '1': 'correlation_id',
+      '3': 1,
+      '4': 1,
+      '5': 9,
+      '10': 'correlationId'
+    },
     const {'1': 'dummy_id', '3': 2, '4': 1, '5': 9, '10': 'dummyId'},
   ],
 };
@@ -85,8 +131,20 @@ const DummyIdRequest$json = const {
 const DummyObjectRequest$json = const {
   '1': 'DummyObjectRequest',
   '2': const [
-    const {'1': 'correlation_id', '3': 1, '4': 1, '5': 9, '10': 'correlationId'},
-    const {'1': 'dummy', '3': 2, '4': 1, '5': 11, '6': '.dummies.Dummy', '10': 'dummy'},
+    const {
+      '1': 'correlation_id',
+      '3': 1,
+      '4': 1,
+      '5': 9,
+      '10': 'correlationId'
+    },
+    const {
+      '1': 'dummy',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.dummies.Dummy',
+      '10': 'dummy'
+    },
   ],
 };
-

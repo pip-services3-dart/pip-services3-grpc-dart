@@ -39,7 +39,7 @@ void main() async {
   client.setReferences(References());
   await client.open('123');
 //----------------------------------------------
-  var dummy1 = Dummy.from('', 'Key 1', 'Content 1');
+  var dummy1 = Dummy(id:'', key:'Key 1', content:'Content 1');
 
   // Create one dummy
   var dummy = await client.createDummy('123', dummy1);

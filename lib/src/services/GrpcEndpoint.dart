@@ -7,7 +7,28 @@ import 'package:pip_services3_commons/pip_services3_commons.dart';
 import 'package:pip_services3_components/pip_services3_components.dart';
 import 'package:pip_services3_rpc/pip_services3_rpc.dart';
 import './IRegisterable.dart';
-//import  '../../test/generated/dummies_pb.dart';
+
+/// Helper classs for work commandable service
+class _CommandableMediator extends command.CommandableServiceBase {
+  Future<command.InvokeReply> Function(
+      grpc.ServiceCall call, command.InvokeRequest request) _invoke;
+
+  @override
+  Future<command.InvokeReply> invoke(
+      grpc.ServiceCall call, command.InvokeRequest request) {
+    if (_invoke != null) {
+      return _invoke(call, request);
+    }
+    return null;
+  }
+
+  /// Sets invoke function
+  set invokeFunc(
+      Future<command.InvokeReply> fn(
+          grpc.ServiceCall call, command.InvokeRequest request)) {
+    _invoke = fn;
+  }
+}
 
 /// Used for creating GRPC endpoints. An endpoint is a URL, at which a given service can be accessed by a client.
 ///
@@ -29,7 +50,7 @@ import './IRegisterable.dart';
 /// ### References ###
 ///
 /// A logger, counters, and a connection resolver can be referenced by passing the
-/// following references to the object's [[setReferences]] method:
+/// following references to the object's [setReferences] method:
 ///
 /// - logger: '\*:logger:\*:\*:1.0';
 /// - counters: '\*:counters:\*:\*:1.0';
@@ -37,41 +58,20 @@ import './IRegisterable.dart';
 ///
 /// ### Examples ###
 ///
-///     public MyMethod(_config: ConfigParams, _references: IReferences) {
-///         var endpoint = new HttpEndpoint();
-///         if (this._config)
-///             endpoint.configure(this._config);
-///         if (this._references)
-///             endpoint.setReferences(this._references);
+///     void MyMethod(ConfigParams _config, IReferences _references) async {
+///         var endpoint = new GrpcEndpoint();
+///         if (_config != null)
+///             endpoint.configure(_config);
+///         if (_references 1= null)
+///             endpoint.setReferences(_references);
 ///         ...
+///         _opened = false;
 ///
-///         this._endpoint.open(correlationId, (err) => {
-///                 this._opened = err == null;
-///                 callback(err);
-///             });
+///         await endpoint.open(correlationId);
+///         _opened = true;
+///
 ///         ...
 ///     }
-
-class _CommandableMediator extends command.CommandableServiceBase {
-  Future<command.InvokeReply> Function(
-      grpc.ServiceCall call, command.InvokeRequest request) _invoke;
-
-  @override
-  Future<command.InvokeReply> invoke(
-      grpc.ServiceCall call, command.InvokeRequest request) {
-    if (_invoke != null) {
-      return _invoke(call, request);
-    }
-    return null;
-  }
-
-  set invokeFunc(
-      Future<command.InvokeReply> fn(
-          grpc.ServiceCall call, command.InvokeRequest request)) {
-    _invoke = fn;
-  }
-}
-
 class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   static final _defaultConfig = ConfigParams.fromTuples([
     'connection.protocol',
@@ -113,7 +113,7 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   final _services = <grpc.Service>[];
   List<grpc.Interceptor> _interceptors;
 
-  /// Configures this HttpEndpoint using the given configuration parameters.
+  /// Configures this GrpcEndpoint using the given configuration parameters.
   ///
   /// Configuration parameters:
   /// - [connection(s)] - the connection resolver's connections;
@@ -176,12 +176,10 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
     }
 
     var connection = await _connectionResolver.resolve(correlationId);
-
     _uri = connection.getUri();
-
     try {
       await _connectionResolver.register(correlationId);
-      // Make registration for adds all services before create server
+      // Perform registration for adds all services before create server
       _performRegistrations();
 
       if (_interceptors != null && _interceptors.isNotEmpty) {
@@ -189,7 +187,6 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
       } else {
         _server = grpc.Server(_services);
       }
-
       if (connection.getProtocol('http') == 'https') {
         var sslKeyFile = connection.getAsNullableString('ssl_key_file');
         var sslCrtFile = connection.getAsNullableString('ssl_crt_file');
@@ -218,8 +215,8 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   /// Closes this endpoint and the GRPC server (service) that was opened earlier.
   ///
   /// - [correlationId]     (optional) transaction id to trace execution through call chain.
-  /// Return          (optional) Future the closing process is complete.
-  ///                          Will be called with an error if one is raised.
+  /// Return           Future the closing process is complete.
+  /// Throws           error if one is raised.
   @override
   Future close(String correlationId) async {
     if (_server != null) {
@@ -317,11 +314,11 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
           ? Parameters.fromJson(json.decode(argsJson))
           : Parameters();
 
-      // Todo: Validate schema
-      var schema = _commandableSchemas[method];
-      if (schema != null) {
-        //...
-      }
+      // TODO: Validate schema
+      // var schema = _commandableSchemas[method];
+      // if (schema != null) {
+      //   //...
+      // }
       // Call command action
       try {
         var result = await action(correlationId, args);
@@ -386,6 +383,9 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
     _commandableSchemas[method] = schema;
   }
 
+  /// Registers a interceptor in this objects GRPC server (service)
+  ///
+  /// - [action]        the action to perform.
   void registerInterceptor(grpc.Interceptor action) {
     _interceptors ??= <grpc.Interceptor>[];
     _interceptors.add(action);

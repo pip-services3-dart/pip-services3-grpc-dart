@@ -14,13 +14,9 @@ class DefaultGrpcFactory extends Factory {
       Descriptor('pip-services', 'factory', 'grpc', 'default', '1.0');
   static final GrpcEndpointDescriptor =
       Descriptor('pip-services', 'endpoint', 'grpc', '*', '1.0');
-  //  static final StatusServiceDescriptor =  Descriptor('pip-services', 'status-service', 'grpc', '*', '1.0');
-  //  static final HeartbeatServiceDescriptor =  Descriptor('pip-services', 'heartbeat-service', 'grpc', '*', '1.0');
 
   /// Create a new instance of the factory.
   DefaultGrpcFactory() : super() {
     registerAsType(DefaultGrpcFactory.GrpcEndpointDescriptor, GrpcEndpoint);
-    // registerAsType(DefaultRpcFactory.HeartbeatServiceDescriptor, HeartbeatGrpcService);
-    // registerAsType(DefaultRpcFactory.StatusServiceDescriptor, StatusGrpcService);
   }
 }

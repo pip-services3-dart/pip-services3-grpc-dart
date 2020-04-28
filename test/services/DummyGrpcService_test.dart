@@ -57,12 +57,12 @@ void main() {
       channel = grpc.ClientChannel('localhost', port: 3000, options: options);
       client = dummygrpc.DummiesClient(channel);
 
-      _dummy1 = Dummy.from('', 'Key 1', 'Content 1');
-      _dummy2 = Dummy.from('', 'Key 2', 'Content 2');
+      _dummy1 = Dummy(id:'', key:'Key 1', content:'Content 1');
+      _dummy2 = Dummy(id:'', key:'Key 2', content:'Content 2');
     });
 
     test('CRUD Operations', () async {
-      var dummy1, dummy2;
+      var dummy1;
       var request;
 
       // Create one dummy
@@ -89,7 +89,6 @@ void main() {
       expect(dummy, isNotNull);
       expect(dummy.content, _dummy2.content);
       expect(dummy.key, _dummy2.key);
-      dummy2 = dummy;
 
       // Get all dummies
       request = messages.DummiesPageRequest();

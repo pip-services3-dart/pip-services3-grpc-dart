@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:grpc/grpc.dart' as grpc;
 import 'package:protobuf/protobuf.dart';
-//import '../generated/commandable.pbgrpc.dart';
 import 'package:pip_services3_commons/pip_services3_commons.dart';
 import 'package:pip_services3_components/pip_services3_components.dart';
 import 'package:pip_services3_rpc/pip_services3_rpc.dart';
@@ -37,28 +36,29 @@ import 'package:pip_services3_rpc/pip_services3_rpc.dart';
 ///     class MyGrpcClient extends GrpcClient implements IMyClient {
 ///        ...
 ///
-///        public getData(String correlationId, id: string,
-///            callback: (err: any, result: MyData) => void): void {
+///        Future<MyData> getData(String correlationId, string id) async {
 ///
 ///            var timing = this.instrument(correlationId, 'myclient.get_data');
-///            this.call('get_data', correlationId, { id: id }, (err, result) => {
-///                timing.endTiming();
-///                callback(err, result);
-///            });
+///            var request = MyDataRequest();
+///            request.id = id;
+///            var response = await call<MydataRequest,MyDataResponse>('get_data', correlationId, request)
+///            timing.endTiming();
+///            MyData item;
+///            ///... convert MyDataResponse to MyData
+///            return item;
 ///        }
 ///        ...
 ///     }
 ///
-///     var client = new MyGrpcClient();
-///     client.configure(ConfigParams.fromTuples(
+///     var client = MyGrpcClient();
+///     client.configure(ConfigParams.fromTuples([
 ///         'connection.protocol', 'http',
 ///         'connection.host', 'localhost',
 ///         'connection.port', 8080
-///     ));
+///     ]));
 ///
-///     client.getData('123', '1', (err, result) => {
+///     var item = await client.getData('123', '1')
 ///       ...
-///     });
 
 abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   static final _defaultConfig = ConfigParams.fromTuples([
@@ -81,9 +81,6 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   ]);
 
   String _clientName;
-
-  /// The GRPC client.
-  //grpc.Client _client;
 
   /// The GRPC client chanel
   grpc.ClientChannel _channel;
@@ -129,7 +126,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
 
   /// Sets references to dependent components.
   ///
-  /// - references 	references to locate the component dependencies.
+  /// - [references] 	references to locate the component dependencies.
   @override
   void setReferences(IReferences references) {
     _logger.setReferences(references);
@@ -143,7 +140,6 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [correlationId]     (optional) transaction id to trace execution through call chain.
   /// - [name]              a method name.
   /// Returns Timing object to end the time measurement.
-
   Timing instrument(String correlationId, String name) {
     _logger.trace(correlationId, 'Executing %s method', [name]);
     _counters.incrementOne(name + '.call_count');
@@ -205,9 +201,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
           idleTimeout: Duration(milliseconds: _timeout));
       _channel = grpc.ClientChannel(connection.getHost(),
           port: connection.getPort(), options: options);
-      //_client = CommandableClient(_channel);
     } catch (ex) {
-      //_client = null;
       _channel = null;
       throw ConnectionException(
               correlationId, 'CANNOT_CONNECT', 'Opening GRPC client failed')
@@ -230,8 +224,6 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
         _logger.warn(
             correlationId, 'Failed while closing GRPC service: %s', ex);
       }
-
-      //_client = null;
       _channel = null;
       _uri = null;
     }
@@ -243,9 +235,10 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [correlationId]     (optional) transaction id to trace execution through call chain.
   /// - [request]           (optional) request object.
   /// Return                (optional) Future that receives result object or error.
-  grpc.ResponseFuture<R> call<Q extends GeneratedMessage, R extends GeneratedMessage>(
-      String method, String correlationId, Q request,
-      {grpc.CallOptions options}) {
+  grpc.ResponseFuture<R>
+      call<Q extends GeneratedMessage, R extends GeneratedMessage>(
+          String method, String correlationId, Q request,
+          {grpc.CallOptions options}) {
     method = method.toLowerCase();
     method = '/' + _clientName + '/' + method;
 
@@ -258,8 +251,8 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
       return item;
     });
 
-    final call = _channel.createCall(
-        clientMethod, Stream.fromIterable([request]), _options.mergedWith(options));
+    final call = _channel.createCall(clientMethod,
+        Stream.fromIterable([request]), _options.mergedWith(options));
     return grpc.ResponseFuture(call);
   }
 
