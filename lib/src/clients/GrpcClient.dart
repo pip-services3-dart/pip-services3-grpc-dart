@@ -29,7 +29,7 @@ import 'package:pip_services3_rpc/pip_services3_rpc.dart';
 /// - *:discovery:*:*:1.0        (optional) [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html) services to resolve connection
 ///
 /// See [GrpcService]
-/// See [CommandableHttpService]
+/// See [CommandableHttpService](https://pub.dev/documentation/pip_services3_rpc/latest/pip_services3_rpc/CommandableHttpService-class.html)
 ///
 /// ### Example ###
 ///

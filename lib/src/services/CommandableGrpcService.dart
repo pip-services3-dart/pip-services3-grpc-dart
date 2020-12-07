@@ -3,7 +3,7 @@ import 'package:pip_services3_commons/pip_services3_commons.dart';
 import './GrpcService.dart';
 
 /// Abstract service that receives commands via GRPC protocol
-/// to operations automatically generated for commands defined in [ICommandable components].
+/// to operations automatically generated for commands defined in [ICommandable components](https://pub.dev/documentation/pip_services3_commons/latest/pip_services3_commons/ICommandable-class.html).
 /// Each command is exposed as invoke method that receives command name and parameters.
 ///
 /// Commandable services require only 3 lines of code to implement a robust external

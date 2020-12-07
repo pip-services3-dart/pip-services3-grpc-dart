@@ -7,7 +7,7 @@ import '../generated/commandable.pbgrpc.dart' as command;
 
 /// Abstract client that calls commandable GRPC service.
 ///
-/// Commandable services are generated automatically for [ICommandable objects].
+/// Commandable services are generated automatically for [ICommandable objects](https://pub.dev/documentation/pip_services3_commons/latest/pip_services3_commons/ICommandable-class.html).
 /// Each command is exposed as Invoke method that receives all parameters as args.
 ///
 /// ### Configuration parameters ###
