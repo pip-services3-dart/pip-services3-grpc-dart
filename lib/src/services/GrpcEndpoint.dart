@@ -34,7 +34,7 @@ class _CommandableMediator extends command.CommandableServiceBase {
 ///
 /// ### Configuration parameters ###
 ///
-/// Parameters to pass to the [[configure]] method for component configuration:
+/// Parameters to pass to the [configure] method for component configuration:
 ///
 /// - [connection(s)] - the connection resolver's connections:
 ///     - '[connection.discovery_key]' - the key to use for connection resolving in a discovery service;
@@ -128,7 +128,7 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   ///
   /// - [config]    configuration parameters, containing a 'connection(s)' section.
   ///
-  /// See [ConfigParams] (in the PipServices 'Commons' package)
+  /// See [ConfigParams](https://pub.dev/documentation/pip_services3_commons/latest/pip_services3_commons/ConfigParams-class.html) (in the PipServices 'Commons' package)
   @override
   void configure(ConfigParams config) {
     config = config.setDefaults(GrpcEndpoint._defaultConfig);
@@ -242,7 +242,7 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   ///
   /// - [registration]      the registration to add.
   ///
-  /// See [[IRegisterable]]
+  /// See [IRegisterable]
 
   void register(IRegisterable registration) {
     _registrations.add(registration);

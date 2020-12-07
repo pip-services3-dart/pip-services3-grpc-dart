@@ -4,7 +4,7 @@ import '../services/GrpcEndpoint.dart';
 
 /// Creates GRPC components by their descriptors.
 ///
-/// See [Factory]
+/// See [Factory](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/Factory-class.html)
 /// See [GrpcEndpoint]
 /// See [HeartbeatGrpcService]
 /// See [StatusGrpcService]
