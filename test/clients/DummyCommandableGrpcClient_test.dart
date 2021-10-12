@@ -17,9 +17,9 @@ var grpcConfig = ConfigParams.fromTuples([
 
 void main() {
   group('DummyCommandableGrpcClient', () {
-    DummyCommandableGrpcService service;
+    late DummyCommandableGrpcService service;
+    late DummyClientFixture fixture;
     DummyCommandableGrpcClient client;
-    DummyClientFixture fixture;
 
     setUpAll(() async {
       var ctrl = DummyController();

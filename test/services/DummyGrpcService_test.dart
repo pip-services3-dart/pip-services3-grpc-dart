@@ -20,12 +20,12 @@ void main() {
   ]);
 
   group('DummyGrpcService', () {
-    Dummy _dummy1;
-    Dummy _dummy2;
+    late Dummy _dummy1;
+    late Dummy _dummy2;
 
-    DummyGrpcService service;
+    late DummyGrpcService service;
 
-    dummygrpc.DummiesClient client;
+    late dummygrpc.DummiesClient client;
     grpc.ClientChannel channel;
 
     setUpAll(() async {
@@ -67,9 +67,9 @@ void main() {
 
       // Create one dummy
       var dummy = messages.Dummy();
-      dummy.id = _dummy1.id;
-      dummy.key = _dummy1.key;
-      dummy.content = _dummy1.content;
+      dummy.id = _dummy1.id!;
+      dummy.key = _dummy1.key!;
+      dummy.content = _dummy1.content!;
       request = messages.DummyObjectRequest();
       request.dummy = dummy;
       dummy = await client.create_dummy(request);
@@ -80,9 +80,9 @@ void main() {
 
       // Create another dummy
       dummy = messages.Dummy();
-      dummy.id = _dummy2.id;
-      dummy.key = _dummy2.key;
-      dummy.content = _dummy2.content;
+      dummy.id = _dummy2.id!;
+      dummy.key = _dummy2.key!;
+      dummy.content = _dummy2.content!;
       request = messages.DummyObjectRequest();
       request.dummy = dummy;
       dummy = await client.create_dummy(request);

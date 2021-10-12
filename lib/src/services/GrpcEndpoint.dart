@@ -11,21 +11,22 @@ import './IRegisterable.dart';
 /// Helper classs for work commandable service
 class _CommandableMediator extends command.CommandableServiceBase {
   Future<command.InvokeReply> Function(
-      grpc.ServiceCall call, command.InvokeRequest request) _invoke;
+      grpc.ServiceCall call, command.InvokeRequest request)? _invoke;
 
   @override
   Future<command.InvokeReply> invoke(
-      grpc.ServiceCall call, command.InvokeRequest request) {
+      grpc.ServiceCall call, command.InvokeRequest request) async {
     if (_invoke != null) {
-      return _invoke(call, request);
+      return await _invoke!(call, request);
     }
-    return null;
+    return command.InvokeReply().createEmptyInstance();
   }
 
   /// Sets invoke function
   set invokeFunc(
-      Future<command.InvokeReply> fn(
-          grpc.ServiceCall call, command.InvokeRequest request)) {
+      Future<command.InvokeReply> Function(
+              grpc.ServiceCall call, command.InvokeRequest request)
+          fn) {
     _invoke = fn;
   }
 }
@@ -98,20 +99,20 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
     true
   ]);
 
-  grpc.Server _server;
+  grpc.Server? _server;
   final _connectionResolver = HttpConnectionResolver();
   final _logger = CompositeLogger();
   final _counters = CompositeCounters();
   bool _maintenanceEnabled = false;
   int _fileMaxSize = 200 * 1024 * 1024;
-  String _uri;
+  String? _uri;
   final _registrations = <IRegisterable>[];
-  var _commandableMethods = <String,
-      Future<dynamic> Function(String correlationId, Parameters args)>{};
-  var _commandableSchemas = <String, Schema>{};
-  _CommandableMediator _commandableService;
+  Map<String, Future<dynamic> Function(String? correlationId, Parameters args)>?
+      _commandableMethods = {};
+  Map<String, Schema>? _commandableSchemas = {};
+  _CommandableMediator? _commandableService;
   final _services = <grpc.Service>[];
-  List<grpc.Interceptor> _interceptors;
+  List<grpc.Interceptor> _interceptors = [];
 
   /// Configures this GrpcEndpoint using the given configuration parameters.
   ///
@@ -170,13 +171,13 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   /// Return               Future the opening process is complete.
   /// Throws               error if one is raised.
   @override
-  Future open(String correlationId) async {
+  Future open(String? correlationId) async {
     if (isOpen()) {
       return null;
     }
 
     var connection = await _connectionResolver.resolve(correlationId);
-    _uri = connection.getUri();
+    _uri = connection!.getAsString('uri');
     try {
       await _connectionResolver.register(correlationId);
       // Perform registration for adds all services before create server
@@ -187,20 +188,21 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
       } else {
         _server = grpc.Server(_services);
       }
-      if (connection.getProtocol('http') == 'https') {
+      if (connection.getAsString('uri') == 'https') {
         var sslKeyFile = connection.getAsNullableString('ssl_key_file');
         var sslCrtFile = connection.getAsNullableString('ssl_crt_file');
-        final certificate = File(sslCrtFile).readAsBytes();
-        final privateKey = File(sslKeyFile).readAsBytes();
+        final certificate = File(sslCrtFile!).readAsBytes();
+        final privateKey = File(sslKeyFile!).readAsBytes();
         var tlsCredentials = grpc.ServerTlsCredentials(
             certificate: await certificate, privateKey: await privateKey);
-        await _server.serve(
-            address: connection.getHost(),
-            port: connection.getPort(),
+        await _server!.serve(
+            address: connection.getAsString('host'),
+            port: connection.getAsInteger('port'),
             security: tlsCredentials);
       } else {
-        await _server.serve(
-            address: connection.getHost(), port: connection.getPort());
+        await _server!.serve(
+            address: connection.getAsString('host'),
+            port: connection.getAsInteger('port'));
       }
       _logger.debug(correlationId, 'Opened GRPC service at %s', [_uri]);
     } catch (ex) {
@@ -218,7 +220,7 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   /// Return           Future the closing process is complete.
   /// Throws           error if one is raised.
   @override
-  Future close(String correlationId) async {
+  Future close(String? correlationId) async {
     if (_server != null) {
       _uri = null;
       _commandableMethods = null;
@@ -227,13 +229,13 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
 
       // Eat exceptions
       try {
-        await _server.shutdown();
+        await _server!.shutdown();
         _logger.debug(correlationId, 'Closed GRPC service at %s', [_uri]);
         _commandableService = null;
         _server = null;
       } catch (ex) {
-        _logger.warn(
-            correlationId, 'Failed while closing GRPC service: %s', ex);
+        _logger
+            .warn(correlationId, 'Failed while closing GRPC service: %s', [ex]);
       }
     }
   }
@@ -268,19 +270,19 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   }
 
   void _registerCommandableService() {
-    if (_commandableMethods == null || _commandableMethods.isEmpty) return;
+    if (_commandableMethods == null || _commandableMethods!.isEmpty) return;
 
     _commandableService = _CommandableMediator();
-    _commandableService.invokeFunc = _invokeCommandableMethod;
+    _commandableService!.invokeFunc = _invokeCommandableMethod;
 
-    registerService(_commandableService);
+    registerService(_commandableService!);
   }
 
   Future<command.InvokeReply> _invokeCommandableMethod(
       grpc.ServiceCall call, command.InvokeRequest request) async {
     var method = request.method;
     var action =
-        _commandableMethods != null ? _commandableMethods[method] : null;
+        _commandableMethods != null ? _commandableMethods![method] : null;
     var correlationId = request.correlationId;
     var response = command.InvokeReply();
 
@@ -292,14 +294,14 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
 
       var respErr = ErrorDescriptionFactory.create(err);
       response.error = command.ErrorDescription();
-      response.error.category = respErr.category;
-      response.error.code = respErr.code;
-      response.error.correlationId = respErr.correlation_id;
-      response.error.status = respErr.status;
-      response.error.message = respErr.message;
-      response.error.cause = respErr.cause;
-      response.error.stackTrace = respErr.stack_trace;
-      response.error.details.addAll(respErr.details);
+      response.error.category = respErr.category ?? '';
+      response.error.code = respErr.code ?? '';
+      response.error.correlationId = respErr.correlation_id ?? '';
+      response.error.status = respErr.status ?? 0;
+      response.error.message = respErr.message ?? '';
+      response.error.cause = respErr.cause ?? '';
+      response.error.stackTrace = respErr.stack_trace ?? '';
+      response.error.details.addAll(respErr.details as Map<String, String>);
       response.resultEmpty = true;
       response.resultJson = '';
 
@@ -329,14 +331,14 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
         // Process result and generate response
         var respErr = ErrorDescriptionFactory.create(err);
         response.error = command.ErrorDescription();
-        response.error.category = respErr.category;
-        response.error.code = respErr.code;
-        response.error.correlationId = respErr.correlation_id;
-        response.error.status = respErr.status;
-        response.error.message = respErr.message;
-        response.error.cause = respErr.cause;
-        response.error.stackTrace = respErr.stack_trace;
-        response.error.details.addAll(respErr.details);
+        response.error.category = respErr.category ?? '';
+        response.error.code = respErr.code ?? '';
+        response.error.correlationId = respErr.correlation_id ?? '';
+        response.error.status = respErr.status ?? 0;
+        response.error.message = respErr.message ?? '';
+        response.error.cause = respErr.cause ?? '';
+        response.error.stackTrace = respErr.stack_trace ?? '';
+        response.error.details.addAll(respErr.details as Map<String, String>);
         response.resultEmpty = true;
         response.resultJson = '';
       }
@@ -348,14 +350,14 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
           .withDetails('method', method);
       var respErr = ErrorDescriptionFactory.create(err);
       response.error = command.ErrorDescription();
-      response.error.category = respErr.category;
-      response.error.code = respErr.code;
-      response.error.correlationId = respErr.correlation_id;
-      response.error.status = respErr.status;
-      response.error.message = respErr.message;
-      response.error.cause = respErr.cause;
-      response.error.stackTrace = respErr.stack_trace;
-      response.error.details.addAll(respErr.details);
+      response.error.category = respErr.category ?? '';
+      response.error.code = respErr.code ?? '';
+      response.error.correlationId = respErr.correlation_id ?? '';
+      response.error.status = respErr.status ?? 0;
+      response.error.message = respErr.message ?? '';
+      response.error.cause = respErr.cause ?? '';
+      response.error.stackTrace = respErr.stack_trace ?? '';
+      response.error.details.addAll(respErr.details as Map<String, String>);
       response.resultEmpty = true;
       response.resultJson = '';
     }
@@ -374,20 +376,17 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   /// - [method]        the GRPC method name.
   /// - [schema]        the schema to use for parameter validation.
   /// - [action]        the action to perform at the given route.
-  void registerCommadableMethod(String method, Schema schema,
-      Future<dynamic> Function(String correlationId, Parameters args) action) {
-    _commandableMethods ??= <String,
-        Future<dynamic> Function(String correlationId, Parameters args)>{};
-    _commandableMethods[method] = action;
-    _commandableSchemas ??= <String, Schema>{};
-    _commandableSchemas[method] = schema;
+  void registerCommadableMethod(String method, Schema? schema,
+      Future<dynamic> Function(String? correlationId, Parameters args) action) {
+    _commandableMethods![method] = action;
+    _commandableSchemas![method] = schema ?? Schema();
   }
 
   /// Registers a interceptor in this objects GRPC server (service)
   ///
   /// - [action]        the action to perform.
   void registerInterceptor(grpc.Interceptor action) {
-    _interceptors ??= <grpc.Interceptor>[];
+    // _interceptors ??= <grpc.Interceptor>[];
     _interceptors.add(action);
   }
 }

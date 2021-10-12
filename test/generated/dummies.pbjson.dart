@@ -2,9 +2,14 @@
 //  Generated code. Do not modify.
 //  source: dummies.proto
 //
-// @dart = 2.3
-// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields,deprecated_member_use_from_same_package
 
+import 'dart:core' as $core;
+import 'dart:convert' as $convert;
+import 'dart:typed_data' as $typed_data;
+
+@$core.Deprecated('Use errorDescriptionDescriptor instead')
 const ErrorDescription$json = const {
   '1': 'ErrorDescription',
   '2': const [
@@ -33,6 +38,7 @@ const ErrorDescription$json = const {
   '3': const [ErrorDescription_DetailsEntry$json],
 };
 
+@$core.Deprecated('Use errorDescriptionDescriptor instead')
 const ErrorDescription_DetailsEntry$json = const {
   '1': 'DetailsEntry',
   '2': const [
@@ -42,6 +48,10 @@ const ErrorDescription_DetailsEntry$json = const {
   '7': const {'7': true},
 };
 
+/// Descriptor for `ErrorDescription`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List errorDescriptionDescriptor = $convert.base64Decode(
+    'ChBFcnJvckRlc2NyaXB0aW9uEhoKCGNhdGVnb3J5GAEgASgJUghjYXRlZ29yeRISCgRjb2RlGAIgASgJUgRjb2RlEiUKDmNvcnJlbGF0aW9uX2lkGAMgASgJUg1jb3JyZWxhdGlvbklkEhYKBnN0YXR1cxgEIAEoCVIGc3RhdHVzEhgKB21lc3NhZ2UYBSABKAlSB21lc3NhZ2USFAoFY2F1c2UYBiABKAlSBWNhdXNlEh8KC3N0YWNrX3RyYWNlGAcgASgJUgpzdGFja1RyYWNlEkAKB2RldGFpbHMYCCADKAsyJi5kdW1taWVzLkVycm9yRGVzY3JpcHRpb24uRGV0YWlsc0VudHJ5UgdkZXRhaWxzGjoKDERldGFpbHNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoCVIFdmFsdWU6AjgB');
+@$core.Deprecated('Use pagingParamsDescriptor instead')
 const PagingParams$json = const {
   '1': 'PagingParams',
   '2': const [
@@ -51,6 +61,10 @@ const PagingParams$json = const {
   ],
 };
 
+/// Descriptor for `PagingParams`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List pagingParamsDescriptor = $convert.base64Decode(
+    'CgxQYWdpbmdQYXJhbXMSEgoEc2tpcBgBIAEoA1IEc2tpcBISCgR0YWtlGAIgASgFUgR0YWtlEhQKBXRvdGFsGAMgASgIUgV0b3RhbA==');
+@$core.Deprecated('Use dummyDescriptor instead')
 const Dummy$json = const {
   '1': 'Dummy',
   '2': const [
@@ -60,6 +74,10 @@ const Dummy$json = const {
   ],
 };
 
+/// Descriptor for `Dummy`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dummyDescriptor = $convert.base64Decode(
+    'CgVEdW1teRIOCgJpZBgBIAEoCVICaWQSEAoDa2V5GAIgASgJUgNrZXkSGAoHY29udGVudBgDIAEoCVIHY29udGVudA==');
+@$core.Deprecated('Use dummiesPageDescriptor instead')
 const DummiesPage$json = const {
   '1': 'DummiesPage',
   '2': const [
@@ -75,6 +93,10 @@ const DummiesPage$json = const {
   ],
 };
 
+/// Descriptor for `DummiesPage`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dummiesPageDescriptor = $convert.base64Decode(
+    'CgtEdW1taWVzUGFnZRIUCgV0b3RhbBgBIAEoA1IFdG90YWwSIgoEZGF0YRgCIAMoCzIOLmR1bW1pZXMuRHVtbXlSBGRhdGE=');
+@$core.Deprecated('Use dummiesPageRequestDescriptor instead')
 const DummiesPageRequest$json = const {
   '1': 'DummiesPageRequest',
   '2': const [
@@ -105,6 +127,7 @@ const DummiesPageRequest$json = const {
   '3': const [DummiesPageRequest_FilterEntry$json],
 };
 
+@$core.Deprecated('Use dummiesPageRequestDescriptor instead')
 const DummiesPageRequest_FilterEntry$json = const {
   '1': 'FilterEntry',
   '2': const [
@@ -114,6 +137,10 @@ const DummiesPageRequest_FilterEntry$json = const {
   '7': const {'7': true},
 };
 
+/// Descriptor for `DummiesPageRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dummiesPageRequestDescriptor = $convert.base64Decode(
+    'ChJEdW1taWVzUGFnZVJlcXVlc3QSJQoOY29ycmVsYXRpb25faWQYASABKAlSDWNvcnJlbGF0aW9uSWQSPwoGZmlsdGVyGAIgAygLMicuZHVtbWllcy5EdW1taWVzUGFnZVJlcXVlc3QuRmlsdGVyRW50cnlSBmZpbHRlchItCgZwYWdpbmcYAyABKAsyFS5kdW1taWVzLlBhZ2luZ1BhcmFtc1IGcGFnaW5nGjkKC0ZpbHRlckVudHJ5EhAKA2tleRgBIAEoCVIDa2V5EhQKBXZhbHVlGAIgASgJUgV2YWx1ZToCOAE=');
+@$core.Deprecated('Use dummyIdRequestDescriptor instead')
 const DummyIdRequest$json = const {
   '1': 'DummyIdRequest',
   '2': const [
@@ -128,6 +155,10 @@ const DummyIdRequest$json = const {
   ],
 };
 
+/// Descriptor for `DummyIdRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dummyIdRequestDescriptor = $convert.base64Decode(
+    'Cg5EdW1teUlkUmVxdWVzdBIlCg5jb3JyZWxhdGlvbl9pZBgBIAEoCVINY29ycmVsYXRpb25JZBIZCghkdW1teV9pZBgCIAEoCVIHZHVtbXlJZA==');
+@$core.Deprecated('Use dummyObjectRequestDescriptor instead')
 const DummyObjectRequest$json = const {
   '1': 'DummyObjectRequest',
   '2': const [
@@ -148,3 +179,7 @@ const DummyObjectRequest$json = const {
     },
   ],
 };
+
+/// Descriptor for `DummyObjectRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List dummyObjectRequestDescriptor = $convert.base64Decode(
+    'ChJEdW1teU9iamVjdFJlcXVlc3QSJQoOY29ycmVsYXRpb25faWQYASABKAlSDWNvcnJlbGF0aW9uSWQSJAoFZHVtbXkYAiABKAsyDi5kdW1taWVzLkR1bW15UgVkdW1teQ==');

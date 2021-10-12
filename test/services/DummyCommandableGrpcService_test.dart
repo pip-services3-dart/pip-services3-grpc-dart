@@ -24,12 +24,12 @@ void main() {
   ]);
 
   group('DummyCommandableGrpcService', () {
-    Dummy _dummy1;
-    Dummy _dummy2;
+    late Dummy _dummy1;
+    late Dummy _dummy2;
 
-    DummyCommandableGrpcService service;
+    late DummyCommandableGrpcService service;
 
-    command.CommandableClient client;
+    late command.CommandableClient client;
     grpc.ClientChannel channel;
 
     setUpAll(() async {

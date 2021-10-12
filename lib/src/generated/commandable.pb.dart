@@ -2,42 +2,101 @@
 //  Generated code. Do not modify.
 //  source: commandable.proto
 //
-// @dart = 2.3
-// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class ErrorDescription extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('ErrorDescription',
-      package: const $pb.PackageName('commandable'),
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'ErrorDescription',
+      package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'commandable'),
       createEmptyInstance: create)
-    ..aOS(1, 'category')
-    ..aOS(2, 'code')
-    ..aOS(3, 'correlationId')
-    ..a<$core.int>(4, 'status', $pb.PbFieldType.O3)
-    ..aOS(5, 'message')
-    ..aOS(6, 'cause')
-    ..aOS(7, 'stackTrace')
-    ..m<$core.String, $core.String>(8, 'details',
-        entryClassName: 'ErrorDescription.DetailsEntry',
-        keyFieldType: $pb.PbFieldType.OS,
-        valueFieldType: $pb.PbFieldType.OS,
-        packageName: const $pb.PackageName('commandable'))
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'category')
+    ..aOS(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'code')
+    ..aOS(
+        3,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'correlationId')
+    ..a<$core.int>(
+        4,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status',
+        $pb.PbFieldType.O3)
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cause')
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stackTrace')
+    ..m<$core.String, $core.String>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'details', entryClassName: 'ErrorDescription.DetailsEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OS, packageName: const $pb.PackageName('commandable'))
     ..hasRequiredFields = false;
 
   ErrorDescription._() : super();
-  factory ErrorDescription() => create();
+  factory ErrorDescription({
+    $core.String? category,
+    $core.String? code,
+    $core.String? correlationId,
+    $core.int? status,
+    $core.String? message,
+    $core.String? cause,
+    $core.String? stackTrace,
+    $core.Map<$core.String, $core.String>? details,
+  }) {
+    final _result = create();
+    if (category != null) {
+      _result.category = category;
+    }
+    if (code != null) {
+      _result.code = code;
+    }
+    if (correlationId != null) {
+      _result.correlationId = correlationId;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    if (cause != null) {
+      _result.cause = cause;
+    }
+    if (stackTrace != null) {
+      _result.stackTrace = stackTrace;
+    }
+    if (details != null) {
+      _result.details.addAll(details);
+    }
+    return _result;
+  }
   factory ErrorDescription.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory ErrorDescription.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   ErrorDescription clone() => ErrorDescription()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   ErrorDescription copyWith(void Function(ErrorDescription) updates) =>
-      super.copyWith((message) => updates(message as ErrorDescription));
+      super.copyWith((message) => updates(message as ErrorDescription))
+          as ErrorDescription; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ErrorDescription create() => ErrorDescription._();
@@ -47,7 +106,7 @@ class ErrorDescription extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static ErrorDescription getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<ErrorDescription>(create);
-  static ErrorDescription _defaultInstance;
+  static ErrorDescription? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get category => $_getSZ(0);
@@ -138,26 +197,72 @@ class ErrorDescription extends $pb.GeneratedMessage {
 }
 
 class InvokeRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('InvokeRequest',
-      package: const $pb.PackageName('commandable'),
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'InvokeRequest',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'commandable'),
       createEmptyInstance: create)
-    ..aOS(1, 'method')
-    ..aOS(2, 'correlationId')
-    ..aOB(3, 'argsEmpty')
-    ..aOS(4, 'argsJson')
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'method')
+    ..aOS(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'correlationId')
+    ..aOB(
+        3,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'argsEmpty')
+    ..aOS(4,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'argsJson')
     ..hasRequiredFields = false;
 
   InvokeRequest._() : super();
-  factory InvokeRequest() => create();
+  factory InvokeRequest({
+    $core.String? method,
+    $core.String? correlationId,
+    $core.bool? argsEmpty,
+    $core.String? argsJson,
+  }) {
+    final _result = create();
+    if (method != null) {
+      _result.method = method;
+    }
+    if (correlationId != null) {
+      _result.correlationId = correlationId;
+    }
+    if (argsEmpty != null) {
+      _result.argsEmpty = argsEmpty;
+    }
+    if (argsJson != null) {
+      _result.argsJson = argsJson;
+    }
+    return _result;
+  }
   factory InvokeRequest.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory InvokeRequest.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   InvokeRequest clone() => InvokeRequest()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   InvokeRequest copyWith(void Function(InvokeRequest) updates) =>
-      super.copyWith((message) => updates(message as InvokeRequest));
+      super.copyWith((message) => updates(message as InvokeRequest))
+          as InvokeRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static InvokeRequest create() => InvokeRequest._();
@@ -167,7 +272,7 @@ class InvokeRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static InvokeRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<InvokeRequest>(create);
-  static InvokeRequest _defaultInstance;
+  static InvokeRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get method => $_getSZ(0);
@@ -219,25 +324,60 @@ class InvokeRequest extends $pb.GeneratedMessage {
 }
 
 class InvokeReply extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('InvokeReply',
-      package: const $pb.PackageName('commandable'),
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'InvokeReply',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'commandable'),
       createEmptyInstance: create)
-    ..aOM<ErrorDescription>(1, 'error', subBuilder: ErrorDescription.create)
-    ..aOB(2, 'resultEmpty')
-    ..aOS(3, 'resultJson')
+    ..aOM<ErrorDescription>(1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'error',
+        subBuilder: ErrorDescription.create)
+    ..aOB(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'resultEmpty')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resultJson')
     ..hasRequiredFields = false;
 
   InvokeReply._() : super();
-  factory InvokeReply() => create();
+  factory InvokeReply({
+    ErrorDescription? error,
+    $core.bool? resultEmpty,
+    $core.String? resultJson,
+  }) {
+    final _result = create();
+    if (error != null) {
+      _result.error = error;
+    }
+    if (resultEmpty != null) {
+      _result.resultEmpty = resultEmpty;
+    }
+    if (resultJson != null) {
+      _result.resultJson = resultJson;
+    }
+    return _result;
+  }
   factory InvokeReply.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory InvokeReply.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   InvokeReply clone() => InvokeReply()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   InvokeReply copyWith(void Function(InvokeReply) updates) =>
-      super.copyWith((message) => updates(message as InvokeReply));
+      super.copyWith((message) => updates(message as InvokeReply))
+          as InvokeReply; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static InvokeReply create() => InvokeReply._();
@@ -246,7 +386,7 @@ class InvokeReply extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static InvokeReply getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<InvokeReply>(create);
-  static InvokeReply _defaultInstance;
+  static InvokeReply? _defaultInstance;
 
   @$pb.TagNumber(1)
   ErrorDescription get error => $_getN(0);

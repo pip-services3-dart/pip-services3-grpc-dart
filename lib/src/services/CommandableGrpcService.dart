@@ -58,13 +58,12 @@ import './GrpcService.dart';
 
 abstract class CommandableGrpcService with GrpcService {
   String _name;
-  CommandSet _commandSet;
+  CommandSet? _commandSet;
 
   /// Creates a new instance of the service.
   ///
   /// - [name] a service name.
-  CommandableGrpcService(String name) {
-    _name = name;
+  CommandableGrpcService(String name) : _name = name {
     dependencyResolver.put('controller', 'none');
   }
 
@@ -76,22 +75,22 @@ abstract class CommandableGrpcService with GrpcService {
         dependencyResolver.getOneRequired<ICommandable>('controller');
     _commandSet = controller.getCommandSet();
 
-    var commands = _commandSet.getCommands();
+    var commands = _commandSet!.getCommands();
     for (var index = 0; index < commands.length; index++) {
       var command = commands[index];
 
       var method = '' + _name + '.' + command.getName();
 
       registerCommadableMethod(method, null,
-          (String correlationId, Parameters args) async {
+          (String? correlationId, Parameters args) async {
         var timing = instrument(correlationId, method);
         try {
           var result = await command.execute(correlationId, args);
-          timing.endTiming();
           return result;
         } catch (err) {
+          timing.endFailure(err as Exception);
+        } finally {
           timing.endTiming();
-          instrumentError(correlationId, method, err, true);
         }
       });
     }

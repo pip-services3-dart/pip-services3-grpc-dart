@@ -2,9 +2,14 @@
 //  Generated code. Do not modify.
 //  source: commandable.proto
 //
-// @dart = 2.3
-// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields,deprecated_member_use_from_same_package
 
+import 'dart:core' as $core;
+import 'dart:convert' as $convert;
+import 'dart:typed_data' as $typed_data;
+
+@$core.Deprecated('Use errorDescriptionDescriptor instead')
 const ErrorDescription$json = const {
   '1': 'ErrorDescription',
   '2': const [
@@ -33,6 +38,7 @@ const ErrorDescription$json = const {
   '3': const [ErrorDescription_DetailsEntry$json],
 };
 
+@$core.Deprecated('Use errorDescriptionDescriptor instead')
 const ErrorDescription_DetailsEntry$json = const {
   '1': 'DetailsEntry',
   '2': const [
@@ -42,6 +48,10 @@ const ErrorDescription_DetailsEntry$json = const {
   '7': const {'7': true},
 };
 
+/// Descriptor for `ErrorDescription`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List errorDescriptionDescriptor = $convert.base64Decode(
+    'ChBFcnJvckRlc2NyaXB0aW9uEhoKCGNhdGVnb3J5GAEgASgJUghjYXRlZ29yeRISCgRjb2RlGAIgASgJUgRjb2RlEiUKDmNvcnJlbGF0aW9uX2lkGAMgASgJUg1jb3JyZWxhdGlvbklkEhYKBnN0YXR1cxgEIAEoBVIGc3RhdHVzEhgKB21lc3NhZ2UYBSABKAlSB21lc3NhZ2USFAoFY2F1c2UYBiABKAlSBWNhdXNlEh8KC3N0YWNrX3RyYWNlGAcgASgJUgpzdGFja1RyYWNlEkQKB2RldGFpbHMYCCADKAsyKi5jb21tYW5kYWJsZS5FcnJvckRlc2NyaXB0aW9uLkRldGFpbHNFbnRyeVIHZGV0YWlscxo6CgxEZXRhaWxzRW50cnkSEAoDa2V5GAEgASgJUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbHVlOgI4AQ==');
+@$core.Deprecated('Use invokeRequestDescriptor instead')
 const InvokeRequest$json = const {
   '1': 'InvokeRequest',
   '2': const [
@@ -58,6 +68,10 @@ const InvokeRequest$json = const {
   ],
 };
 
+/// Descriptor for `InvokeRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List invokeRequestDescriptor = $convert.base64Decode(
+    'Cg1JbnZva2VSZXF1ZXN0EhYKBm1ldGhvZBgBIAEoCVIGbWV0aG9kEiUKDmNvcnJlbGF0aW9uX2lkGAIgASgJUg1jb3JyZWxhdGlvbklkEh0KCmFyZ3NfZW1wdHkYAyABKAhSCWFyZ3NFbXB0eRIbCglhcmdzX2pzb24YBCABKAlSCGFyZ3NKc29u');
+@$core.Deprecated('Use invokeReplyDescriptor instead')
 const InvokeReply$json = const {
   '1': 'InvokeReply',
   '2': const [
@@ -73,3 +87,7 @@ const InvokeReply$json = const {
     const {'1': 'result_json', '3': 3, '4': 1, '5': 9, '10': 'resultJson'},
   ],
 };
+
+/// Descriptor for `InvokeReply`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List invokeReplyDescriptor = $convert.base64Decode(
+    'CgtJbnZva2VSZXBseRIzCgVlcnJvchgBIAEoCzIdLmNvbW1hbmRhYmxlLkVycm9yRGVzY3JpcHRpb25SBWVycm9yEiEKDHJlc3VsdF9lbXB0eRgCIAEoCFILcmVzdWx0RW1wdHkSHwoLcmVzdWx0X2pzb24YAyABKAlSCnJlc3VsdEpzb24=');

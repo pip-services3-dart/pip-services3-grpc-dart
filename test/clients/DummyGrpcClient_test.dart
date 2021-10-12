@@ -17,9 +17,9 @@ void main() {
   ]);
 
   group('DummyGrpcClient', () {
-    DummyGrpcService service;
+    late DummyGrpcService service;
+    late DummyClientFixture fixture;
     DummyGrpcClient client;
-    DummyClientFixture fixture;
 
     setUpAll(() async {
       var ctrl = DummyController();

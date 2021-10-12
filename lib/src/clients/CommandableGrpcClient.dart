@@ -34,7 +34,7 @@ import '../generated/commandable.pbgrpc.dart' as command;
 ///     class MyCommandableGrpcClient extends CommandableGrpcClient implements IMyClient {
 ///        ...
 ///
-///         Future<MyData> getData(String correlationId, String id) async {
+///         Future<MyData> getData(String? correlationId, String id) async {
 ///
 ///            var result = await callCommand(
 ///                'get_data',
@@ -65,9 +65,9 @@ class CommandableGrpcClient extends GrpcClient {
   /// Creates a new instance of the client.
   ///
   /// - [name]     a service name.
-  CommandableGrpcClient(String name) : super('commandable.Commandable') {
-    _serviceName = name;
-  }
+  CommandableGrpcClient(String name)
+      : _serviceName = name,
+        super('commandable.Commandable');
 
   /// Calls a remote method via GRPC commadable protocol.
   /// The call is made via Invoke method and all parameters are sent in args object.
@@ -79,14 +79,14 @@ class CommandableGrpcClient extends GrpcClient {
   /// Returns               Future that receives result
   /// Throws error.
 
-  Future callCommand(String name, String correlationId, params) async {
+  Future callCommand(String name, String? correlationId, params) async {
     var method = _serviceName + '.' + name;
     var timing = instrument(correlationId, method);
 
     var request = command.InvokeRequest();
 
     request.method = method;
-    request.correlationId = correlationId;
+    request.correlationId = correlationId ?? '';
     request.argsEmpty = params == null;
     request.argsJson = params != null ? json.encode(params) : '';
 
@@ -105,7 +105,7 @@ class CommandableGrpcClient extends GrpcClient {
         err.message = response.error.message;
         err.cause = response.error.cause;
         err.stack_trace = response.error.stackTrace;
-        err.details.addAll(response.error.details);
+        err.details?.addAll(response.error.details);
         throw ApplicationExceptionFactory.create(err);
       }
 
@@ -119,13 +119,14 @@ class CommandableGrpcClient extends GrpcClient {
       // Handle regular response
       return json.decode(response.resultJson);
     } catch (ex) {
-      timing.endTiming();
       // Handle unexpected error
       var err = ex;
       if (!(ex is ApplicationException)) {
         err = ApplicationException().wrap(ex);
       }
-      instrumentError(correlationId, method, err, true);
+      timing.endFailure(err as Exception);
+    } finally {
+      timing.endSuccess();
     }
   }
 }

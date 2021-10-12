@@ -12,7 +12,7 @@ import '../Dummy.dart';
 import '../IDummyController.dart';
 
 class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
-  IDummyController _controller;
+  IDummyController? _controller;
   int _numberOfCalls = 0;
 
   DummyGrpcService() {
@@ -32,10 +32,10 @@ class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
     return _numberOfCalls;
   }
 
-  Future<GrpcError> _incrementNumberOfCalls(
+  FutureOr<GrpcError?> _incrementNumberOfCalls(
       ServiceCall call, ServiceMethod method) async {
     _numberOfCalls++;
-    //return GrpcError.ok();
+    // return GrpcError.ok();
     return null;
   }
 
@@ -61,15 +61,15 @@ class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
     var timing = instrument(correlationId, 'create_dummy.call');
     try {
       var dummy = Dummy.fromGrpcJson(request.dummy.writeToJsonMap());
-      var result = await _controller.create(request.correlationId, dummy);
-      timing.endTiming();
+      var result = await _controller!.create(request.correlationId, dummy);
       if (result != null) {
         response.mergeFromJsonMap(result.toGrpcJson());
       }
     } catch (ex) {
-      timing.endTiming();
       var err = ApplicationException().wrap(ex);
-      instrumentError(correlationId, 'create_dummy.call', err, true);
+      timing.endFailure(err);
+    } finally {
+      timing.endTiming();
     }
     return response;
   }
@@ -89,15 +89,16 @@ class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
     var timing = instrument(correlationId, 'delete_dummy_by_id.call');
     try {
       var result =
-          await _controller.deleteById(request.correlationId, request.dummyId);
-      timing.endTiming();
+          await _controller!.deleteById(request.correlationId, request.dummyId);
       if (result != null) {
         response.mergeFromJsonMap(result.toGrpcJson());
       }
     } catch (ex) {
-      timing.endTiming();
       var err = ApplicationException().wrap(ex);
-      instrumentError(correlationId, 'delete_dummy_by_id.call', err, true);
+
+      timing.endFailure(err);
+    } finally {
+      timing.endTiming();
     }
     return response;
   }
@@ -123,23 +124,22 @@ class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
     var timing = instrument(correlationId, 'get_dummies.call');
     try {
       var result =
-          await _controller.getPageByFilter(correlationId, filter, paging);
+          await _controller!.getPageByFilter(correlationId, filter, paging);
       var list = PbList<command.Dummy>();
       for (var item in result.data) {
         var cmdDummyItem = command.Dummy();
         cmdDummyItem.mergeFromJsonMap(item.toGrpcJson());
         list.add(cmdDummyItem);
       }
-      timing.endTiming();
       // Hack for set total value
       response.total += result.total;
       response.data.addAll(list);
     } catch (ex) {
       var err = ApplicationException().wrap(ex);
+      timing.endFailure(err);
+    } finally {
       timing.endTiming();
-      instrumentError(correlationId, 'get_dummies.call', err, true);
     }
-
     return response;
   }
 
@@ -159,15 +159,15 @@ class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
     var timing = instrument(correlationId, 'get_dummy_by_id.call');
     try {
       var result =
-          await _controller.getOneById(request.correlationId, request.dummyId);
-      timing.endTiming();
+          await _controller!.getOneById(request.correlationId, request.dummyId);
       if (result != null) {
         response.mergeFromJsonMap(result.toGrpcJson());
       }
     } catch (ex) {
       var err = ApplicationException().wrap(ex);
+      timing.endFailure(err);
+    } finally {
       timing.endTiming();
-      instrumentError(correlationId, 'get_dummy_by_id.call', err, true);
     }
 
     return response;
@@ -189,13 +189,13 @@ class DummyGrpcService extends command.DummiesServiceBase with GrpcService {
     var timing = instrument(correlationId, 'update_dummy.call');
     try {
       var dummy = Dummy.fromGrpcJson(request.dummy.writeToJsonMap());
-      var result = await _controller.update(request.correlationId, dummy);
-      timing.endTiming();
-      response.mergeFromJsonMap(result.toGrpcJson());
+      var result = await _controller!.update(request.correlationId, dummy);
+      response.mergeFromJsonMap(result!.toGrpcJson());
     } catch (ex) {
       var err = ApplicationException().wrap(ex);
+      timing.endFailure(err);
+    } finally {
       timing.endTiming();
-      instrumentError(correlationId, 'update_dummy.call', err, true);
     }
 
     return response;

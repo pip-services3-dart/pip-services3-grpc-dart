@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:grpc/grpc.dart' as grpc;
 import 'package:pip_services3_commons/pip_services3_commons.dart';
 import 'package:pip_services3_components/pip_services3_components.dart';
+import 'package:pip_services3_components/src/trace/CompositeTracer.dart';
+import 'package:pip_services3_rpc/pip_services3_rpc.dart';
 import './GrpcEndpoint.dart';
 import './IRegisterable.dart';
 
@@ -90,15 +92,15 @@ mixin GrpcService
   static final _defaultConfig = ConfigParams.fromTuples(
       ['dependencies.endpoint', '*:endpoint:grpc:*:1.0']);
 
-  String _serviceName;
-  ConfigParams _config;
-  IReferences _references;
+  String? _serviceName;
+  ConfigParams? _config;
+  IReferences? _references;
   bool _localEndpoint = false;
-  IRegisterable _registerable;
+  IRegisterable? _registerable;
   bool _opened = false;
 
   /// The GRPC endpoint that exposes this service.
-  GrpcEndpoint endpoint;
+  GrpcEndpoint? endpoint;
 
   /// The dependency resolver.
   final dependencyResolver = DependencyResolver(GrpcService._defaultConfig);
@@ -108,6 +110,9 @@ mixin GrpcService
 
   /// The performance counters.
   final counters = CompositeCounters();
+
+  /// The tracer.
+  final tracer = CompositeTracer();
 
   /// Sets service name
   /// - [name]  name of service
@@ -146,7 +151,7 @@ mixin GrpcService
       _localEndpoint = false;
     }
     // Add registration callback to the endpoint
-    endpoint.register(this);
+    endpoint!.register(this);
   }
 
   /// Unsets (clears) previously set references to dependent components.
@@ -154,7 +159,7 @@ mixin GrpcService
   void unsetReferences() {
     // Remove registration callback from endpoint
     if (endpoint != null) {
-      endpoint.unregister(_registerable);
+      if (_registerable != null) endpoint!.unregister(_registerable!);
       endpoint = null;
     }
   }
@@ -162,10 +167,10 @@ mixin GrpcService
   GrpcEndpoint _createEndpoint() {
     var endpoint = GrpcEndpoint();
     if (_config != null) {
-      endpoint.configure(_config);
+      endpoint.configure(_config!);
     }
     if (_references != null) {
-      endpoint.setReferences(_references);
+      endpoint.setReferences(_references!);
     }
     return endpoint;
   }
@@ -176,10 +181,14 @@ mixin GrpcService
   /// - [correlationId]     (optional) transaction id to trace execution through call chain.
   /// - [name]              a method name.
   /// Returns Timing object to end the time measurement.
-  Timing instrument(String correlationId, String name) {
+  InstrumentTiming instrument(String? correlationId, String name) {
     logger.trace(correlationId, 'Executing %s method', [name]);
     counters.incrementOne(name + '.exec_count');
-    return counters.beginTiming(name + '.exec_time');
+
+    var counterTiming = counters.beginTiming(name + '.exec_time');
+    var traceTiming = tracer.beginTrace(correlationId, name, '');
+    return InstrumentTiming(correlationId, name, 'exec', logger, counters,
+        counterTiming, traceTiming);
   }
 
   /// Adds instrumentation to error handling.
@@ -188,16 +197,16 @@ mixin GrpcService
   /// - [name]              a method name.
   /// - [err]               an occured error
   /// - [reerror]           if true - throw error
-  void instrumentError(String correlationId, String name, err,
-      [bool reerror = false]) {
-    if (err != null) {
-      logger.error(correlationId, err, 'Failed to execute %s method', [name]);
-      counters.incrementOne(name + '.exec_errors');
-      if (reerror != null && reerror == true) {
-        throw err;
-      }
-    }
-  }
+  // void instrumentError(String? correlationId, String name, err,
+  //     [bool reerror = false]) {
+  //   if (err != null) {
+  //     logger.error(correlationId, err, 'Failed to execute %s method', [name]);
+  //     counters.incrementOne(name + '.exec_errors');
+  //     if (reerror != null && reerror == true) {
+  //       throw err;
+  //     }
+  //   }
+  // }
 
   /// Checks if the component is opened.
   ///
@@ -213,19 +222,19 @@ mixin GrpcService
   /// Return 			Future that receives  null no errors occured.
   /// Throws error
   @override
-  Future open(String correlationId) async {
+  Future open(String? correlationId) async {
     if (_opened) {
       return null;
     }
 
     if (endpoint == null) {
       endpoint = _createEndpoint();
-      endpoint.register(this);
+      endpoint!.register(this);
       _localEndpoint = true;
     }
 
     if (_localEndpoint) {
-      await endpoint.open(correlationId);
+      await endpoint!.open(correlationId);
     }
     _opened = true;
   }
@@ -235,7 +244,7 @@ mixin GrpcService
   /// - [correlationId] 	(optional) transaction id to trace execution through call chain.
   /// Return 			      Future that receives error or null no errors occured.
   @override
-  Future close(String correlationId) async {
+  Future close(String? correlationId) async {
     if (!_opened) {
       return null;
     }
@@ -246,7 +255,7 @@ mixin GrpcService
     }
 
     if (_localEndpoint) {
-      await endpoint.close(correlationId);
+      await endpoint!.close(correlationId);
     }
     _opened = false;
   }
@@ -256,9 +265,9 @@ mixin GrpcService
   /// - [method]        the GRPC method name.
   /// - [schema]        the schema to use for parameter validation.
   /// - [action]        the action to perform at the given route.
-  void registerCommadableMethod(String method, Schema schema,
-      Future<dynamic> Function(String correlationId, Parameters args) action) {
-    endpoint.registerCommadableMethod(method, schema, action);
+  void registerCommadableMethod(String method, Schema? schema,
+      Future<dynamic> Function(String? correlationId, Parameters args) action) {
+    endpoint!.registerCommadableMethod(method, schema, action);
   }
 
   /// Registers a middleware for methods in GRPC endpoint.
@@ -266,7 +275,7 @@ mixin GrpcService
   /// - [action]        an action function that is called when middleware is invoked.
   void registerInterceptor(grpc.Interceptor action) {
     if (endpoint != null) {
-      endpoint.registerInterceptor(action);
+      endpoint!.registerInterceptor(action);
     }
   }
 
@@ -275,7 +284,7 @@ mixin GrpcService
   /// - [implementation] a GRPC service object with service implementation methods.
   void registerService(grpc.Service implementation) {
     if (endpoint != null) {
-      endpoint.registerService(implementation);
+      endpoint!.registerService(implementation);
     }
   }
 

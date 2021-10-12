@@ -3,3 +3,9 @@
 ## 1.0.0
 
 - Initial version, created by Sergey Seroukhov and Dmitry Levichev
+
+## 1.1.0
+
+- Migrated to null safety
+- Added tracers
+- Updated instrument functions

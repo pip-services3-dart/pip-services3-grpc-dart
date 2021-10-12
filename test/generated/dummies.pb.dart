@@ -2,8 +2,8 @@
 //  Generated code. Do not modify.
 //  source: dummies.proto
 //
-// @dart = 2.3
-// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
 
@@ -11,33 +11,92 @@ import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class ErrorDescription extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('ErrorDescription',
-      package: const $pb.PackageName('dummies'), createEmptyInstance: create)
-    ..aOS(1, 'category')
-    ..aOS(2, 'code')
-    ..aOS(3, 'correlationId')
-    ..aOS(4, 'status')
-    ..aOS(5, 'message')
-    ..aOS(6, 'cause')
-    ..aOS(7, 'stackTrace')
-    ..m<$core.String, $core.String>(8, 'details',
-        entryClassName: 'ErrorDescription.DetailsEntry',
-        keyFieldType: $pb.PbFieldType.OS,
-        valueFieldType: $pb.PbFieldType.OS,
-        packageName: const $pb.PackageName('dummies'))
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'ErrorDescription',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dummies'),
+      createEmptyInstance: create)
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'category')
+    ..aOS(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'code')
+    ..aOS(
+        3,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'correlationId')
+    ..aOS(
+        4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cause')
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stackTrace')
+    ..m<$core.String, $core.String>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'details', entryClassName: 'ErrorDescription.DetailsEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OS, packageName: const $pb.PackageName('dummies'))
     ..hasRequiredFields = false;
 
   ErrorDescription._() : super();
-  factory ErrorDescription() => create();
+  factory ErrorDescription({
+    $core.String? category,
+    $core.String? code,
+    $core.String? correlationId,
+    $core.String? status,
+    $core.String? message,
+    $core.String? cause,
+    $core.String? stackTrace,
+    $core.Map<$core.String, $core.String>? details,
+  }) {
+    final _result = create();
+    if (category != null) {
+      _result.category = category;
+    }
+    if (code != null) {
+      _result.code = code;
+    }
+    if (correlationId != null) {
+      _result.correlationId = correlationId;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    if (cause != null) {
+      _result.cause = cause;
+    }
+    if (stackTrace != null) {
+      _result.stackTrace = stackTrace;
+    }
+    if (details != null) {
+      _result.details.addAll(details);
+    }
+    return _result;
+  }
   factory ErrorDescription.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory ErrorDescription.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   ErrorDescription clone() => ErrorDescription()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   ErrorDescription copyWith(void Function(ErrorDescription) updates) =>
-      super.copyWith((message) => updates(message as ErrorDescription));
+      super.copyWith((message) => updates(message as ErrorDescription))
+          as ErrorDescription; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ErrorDescription create() => ErrorDescription._();
@@ -47,7 +106,7 @@ class ErrorDescription extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static ErrorDescription getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<ErrorDescription>(create);
-  static ErrorDescription _defaultInstance;
+  static ErrorDescription? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get category => $_getSZ(0);
@@ -138,24 +197,67 @@ class ErrorDescription extends $pb.GeneratedMessage {
 }
 
 class PagingParams extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('PagingParams',
-      package: const $pb.PackageName('dummies'), createEmptyInstance: create)
-    ..aInt64(1, 'skip')
-    ..a<$core.int>(2, 'take', $pb.PbFieldType.O3)
-    ..aOB(3, 'total')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'PagingParams',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dummies'),
+      createEmptyInstance: create)
+    ..aInt64(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'skip')
+    ..a<$core.int>(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'take',
+        $pb.PbFieldType.O3)
+    ..aOB(
+        3,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'total')
     ..hasRequiredFields = false;
 
   PagingParams._() : super();
-  factory PagingParams() => create();
+  factory PagingParams({
+    $fixnum.Int64? skip,
+    $core.int? take,
+    $core.bool? total,
+  }) {
+    final _result = create();
+    if (skip != null) {
+      _result.skip = skip;
+    }
+    if (take != null) {
+      _result.take = take;
+    }
+    if (total != null) {
+      _result.total = total;
+    }
+    return _result;
+  }
   factory PagingParams.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory PagingParams.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   PagingParams clone() => PagingParams()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   PagingParams copyWith(void Function(PagingParams) updates) =>
-      super.copyWith((message) => updates(message as PagingParams));
+      super.copyWith((message) => updates(message as PagingParams))
+          as PagingParams; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static PagingParams create() => PagingParams._();
@@ -165,7 +267,7 @@ class PagingParams extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static PagingParams getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<PagingParams>(create);
-  static PagingParams _defaultInstance;
+  static PagingParams? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get skip => $_getI64(0);
@@ -205,24 +307,66 @@ class PagingParams extends $pb.GeneratedMessage {
 }
 
 class Dummy extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Dummy',
-      package: const $pb.PackageName('dummies'), createEmptyInstance: create)
-    ..aOS(1, 'id')
-    ..aOS(2, 'key')
-    ..aOS(3, 'content')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'Dummy',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dummies'),
+      createEmptyInstance: create)
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'id')
+    ..aOS(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'key')
+    ..aOS(
+        3,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'content')
     ..hasRequiredFields = false;
 
   Dummy._() : super();
-  factory Dummy() => create();
+  factory Dummy({
+    $core.String? id,
+    $core.String? key,
+    $core.String? content,
+  }) {
+    final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
+    if (key != null) {
+      _result.key = key;
+    }
+    if (content != null) {
+      _result.content = content;
+    }
+    return _result;
+  }
   factory Dummy.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory Dummy.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   Dummy clone() => Dummy()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   Dummy copyWith(void Function(Dummy) updates) =>
-      super.copyWith((message) => updates(message as Dummy));
+      super.copyWith((message) => updates(message as Dummy))
+          as Dummy; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static Dummy create() => Dummy._();
@@ -231,7 +375,7 @@ class Dummy extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static Dummy getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Dummy>(create);
-  static Dummy _defaultInstance;
+  static Dummy? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get id => $_getSZ(0);
@@ -271,23 +415,59 @@ class Dummy extends $pb.GeneratedMessage {
 }
 
 class DummiesPage extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('DummiesPage',
-      package: const $pb.PackageName('dummies'), createEmptyInstance: create)
-    ..aInt64(1, 'total')
-    ..pc<Dummy>(2, 'data', $pb.PbFieldType.PM, subBuilder: Dummy.create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'DummiesPage',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dummies'),
+      createEmptyInstance: create)
+    ..aInt64(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'total')
+    ..pc<Dummy>(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'data',
+        $pb.PbFieldType.PM,
+        subBuilder: Dummy.create)
     ..hasRequiredFields = false;
 
   DummiesPage._() : super();
-  factory DummiesPage() => create();
+  factory DummiesPage({
+    $fixnum.Int64? total,
+    $core.Iterable<Dummy>? data,
+  }) {
+    final _result = create();
+    if (total != null) {
+      _result.total = total;
+    }
+    if (data != null) {
+      _result.data.addAll(data);
+    }
+    return _result;
+  }
   factory DummiesPage.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory DummiesPage.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   DummiesPage clone() => DummiesPage()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   DummiesPage copyWith(void Function(DummiesPage) updates) =>
-      super.copyWith((message) => updates(message as DummiesPage));
+      super.copyWith((message) => updates(message as DummiesPage))
+          as DummiesPage; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static DummiesPage create() => DummiesPage._();
@@ -296,7 +476,7 @@ class DummiesPage extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static DummiesPage getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<DummiesPage>(create);
-  static DummiesPage _defaultInstance;
+  static DummiesPage? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get total => $_getI64(0);
@@ -315,28 +495,65 @@ class DummiesPage extends $pb.GeneratedMessage {
 }
 
 class DummiesPageRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('DummiesPageRequest',
-      package: const $pb.PackageName('dummies'), createEmptyInstance: create)
-    ..aOS(1, 'correlationId')
-    ..m<$core.String, $core.String>(2, 'filter',
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'DummiesPageRequest',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dummies'),
+      createEmptyInstance: create)
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'correlationId')
+    ..m<$core.String, $core.String>(
+        2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'filter',
         entryClassName: 'DummiesPageRequest.FilterEntry',
         keyFieldType: $pb.PbFieldType.OS,
         valueFieldType: $pb.PbFieldType.OS,
         packageName: const $pb.PackageName('dummies'))
-    ..aOM<PagingParams>(3, 'paging', subBuilder: PagingParams.create)
+    ..aOM<PagingParams>(3,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'paging',
+        subBuilder: PagingParams.create)
     ..hasRequiredFields = false;
 
   DummiesPageRequest._() : super();
-  factory DummiesPageRequest() => create();
+  factory DummiesPageRequest({
+    $core.String? correlationId,
+    $core.Map<$core.String, $core.String>? filter,
+    PagingParams? paging,
+  }) {
+    final _result = create();
+    if (correlationId != null) {
+      _result.correlationId = correlationId;
+    }
+    if (filter != null) {
+      _result.filter.addAll(filter);
+    }
+    if (paging != null) {
+      _result.paging = paging;
+    }
+    return _result;
+  }
   factory DummiesPageRequest.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory DummiesPageRequest.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   DummiesPageRequest clone() => DummiesPageRequest()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   DummiesPageRequest copyWith(void Function(DummiesPageRequest) updates) =>
-      super.copyWith((message) => updates(message as DummiesPageRequest));
+      super.copyWith((message) => updates(message as DummiesPageRequest))
+          as DummiesPageRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static DummiesPageRequest create() => DummiesPageRequest._();
@@ -346,7 +563,7 @@ class DummiesPageRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static DummiesPageRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<DummiesPageRequest>(create);
-  static DummiesPageRequest _defaultInstance;
+  static DummiesPageRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get correlationId => $_getSZ(0);
@@ -379,23 +596,57 @@ class DummiesPageRequest extends $pb.GeneratedMessage {
 }
 
 class DummyIdRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('DummyIdRequest',
-      package: const $pb.PackageName('dummies'), createEmptyInstance: create)
-    ..aOS(1, 'correlationId')
-    ..aOS(2, 'dummyId')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'DummyIdRequest',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dummies'),
+      createEmptyInstance: create)
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'correlationId')
+    ..aOS(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'dummyId')
     ..hasRequiredFields = false;
 
   DummyIdRequest._() : super();
-  factory DummyIdRequest() => create();
+  factory DummyIdRequest({
+    $core.String? correlationId,
+    $core.String? dummyId,
+  }) {
+    final _result = create();
+    if (correlationId != null) {
+      _result.correlationId = correlationId;
+    }
+    if (dummyId != null) {
+      _result.dummyId = dummyId;
+    }
+    return _result;
+  }
   factory DummyIdRequest.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory DummyIdRequest.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   DummyIdRequest clone() => DummyIdRequest()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   DummyIdRequest copyWith(void Function(DummyIdRequest) updates) =>
-      super.copyWith((message) => updates(message as DummyIdRequest));
+      super.copyWith((message) => updates(message as DummyIdRequest))
+          as DummyIdRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static DummyIdRequest create() => DummyIdRequest._();
@@ -405,7 +656,7 @@ class DummyIdRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static DummyIdRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<DummyIdRequest>(create);
-  static DummyIdRequest _defaultInstance;
+  static DummyIdRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get correlationId => $_getSZ(0);
@@ -433,23 +684,58 @@ class DummyIdRequest extends $pb.GeneratedMessage {
 }
 
 class DummyObjectRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('DummyObjectRequest',
-      package: const $pb.PackageName('dummies'), createEmptyInstance: create)
-    ..aOS(1, 'correlationId')
-    ..aOM<Dummy>(2, 'dummy', subBuilder: Dummy.create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'DummyObjectRequest',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dummies'),
+      createEmptyInstance: create)
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'correlationId')
+    ..aOM<Dummy>(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'dummy',
+        subBuilder: Dummy.create)
     ..hasRequiredFields = false;
 
   DummyObjectRequest._() : super();
-  factory DummyObjectRequest() => create();
+  factory DummyObjectRequest({
+    $core.String? correlationId,
+    Dummy? dummy,
+  }) {
+    final _result = create();
+    if (correlationId != null) {
+      _result.correlationId = correlationId;
+    }
+    if (dummy != null) {
+      _result.dummy = dummy;
+    }
+    return _result;
+  }
   factory DummyObjectRequest.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory DummyObjectRequest.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   DummyObjectRequest clone() => DummyObjectRequest()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   DummyObjectRequest copyWith(void Function(DummyObjectRequest) updates) =>
-      super.copyWith((message) => updates(message as DummyObjectRequest));
+      super.copyWith((message) => updates(message as DummyObjectRequest))
+          as DummyObjectRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static DummyObjectRequest create() => DummyObjectRequest._();
@@ -459,7 +745,7 @@ class DummyObjectRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static DummyObjectRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<DummyObjectRequest>(create);
-  static DummyObjectRequest _defaultInstance;
+  static DummyObjectRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get correlationId => $_getSZ(0);

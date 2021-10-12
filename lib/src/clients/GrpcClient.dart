@@ -5,6 +5,7 @@ import 'package:grpc/grpc.dart' as grpc;
 import 'package:protobuf/protobuf.dart';
 import 'package:pip_services3_commons/pip_services3_commons.dart';
 import 'package:pip_services3_components/pip_services3_components.dart';
+import 'package:pip_services3_components/src/trace/CompositeTracer.dart';
 import 'package:pip_services3_rpc/pip_services3_rpc.dart';
 
 /// Abstract client that calls remove endpoints using GRPC protocol.
@@ -36,7 +37,7 @@ import 'package:pip_services3_rpc/pip_services3_rpc.dart';
 ///     class MyGrpcClient extends GrpcClient implements IMyClient {
 ///        ...
 ///
-///        Future<MyData> getData(String correlationId, string id) async {
+///        Future<MyData> getData(String? correlationId, string id) async {
 ///
 ///            var timing = this.instrument(correlationId, 'myclient.get_data');
 ///            var request = MyDataRequest();
@@ -83,7 +84,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   String _clientName;
 
   /// The GRPC client chanel
-  grpc.ClientChannel _channel;
+  grpc.ClientChannel? _channel;
 
   /// The connection resolver.
   final _connectionResolver = HttpConnectionResolver();
@@ -93,6 +94,9 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
 
   /// The performance counters.
   final _counters = CompositeCounters();
+
+  /// The tracer.
+  final _tracer = CompositeTracer();
 
   /// The configuration options.
   var _options = ConfigParams();
@@ -104,11 +108,9 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   int _timeout = 10000;
 
   /// The remote service uri which is calculated on open.
-  String _uri;
+  String? _uri;
 
-  GrpcClient(String clientName) {
-    _clientName = clientName;
-  }
+  GrpcClient(String clientName) : _clientName = clientName;
 
   /// Configures component by passing configuration parameters.
   ///
@@ -140,10 +142,14 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [correlationId]     (optional) transaction id to trace execution through call chain.
   /// - [name]              a method name.
   /// Returns Timing object to end the time measurement.
-  Timing instrument(String correlationId, String name) {
+  InstrumentTiming instrument(String? correlationId, String name) {
     _logger.trace(correlationId, 'Executing %s method', [name]);
-    _counters.incrementOne(name + '.call_count');
-    return _counters.beginTiming(name + '.call_time');
+    _counters.incrementOne(name + '.call_time');
+
+    var counterTiming = _counters.beginTiming(name + '.call_time');
+    var traceTiming = _tracer.beginTrace(correlationId, name, '');
+    return InstrumentTiming(correlationId, name, 'exec', _logger, _counters,
+        counterTiming, traceTiming);
   }
 
   /// Adds instrumentation to error handling.
@@ -152,16 +158,16 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [name]              a method name.
   /// - [err]               an occured error
   /// - [reerror]           if true - throw error
-  void instrumentError(String correlationId, String name, err,
-      [bool reerror = false]) {
-    if (err != null) {
-      _logger.error(correlationId, err, 'Failed to call %s method', [name]);
-      _counters.incrementOne(name + '.call_errors');
-      if (reerror != null && reerror == true) {
-        throw err;
-      }
-    }
-  }
+  // void instrumentError(String? correlationId, String name, err,
+  //     [bool reerror = false]) {
+  //   if (err != null) {
+  //     _logger.error(correlationId, err, 'Failed to call %s method', [name]);
+  //     _counters.incrementOne(name + '.call_errors');
+  //     if (reerror != null && reerror == true) {
+  //       throw err;
+  //     }
+  //   }
+  // }
 
   /// Checks if the component is opened.
   ///
@@ -176,21 +182,22 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [correlationId] 	(optional) transaction id to trace execution through call chain.
   /// Return 			      Future that receives error or null no errors occured.
   @override
-  Future open(String correlationId) async {
+  Future open(String? correlationId) async {
     if (isOpen()) {
       return null;
     }
 
     try {
       var connection = await _connectionResolver.resolve(correlationId);
-      _uri = connection.getUri();
+      _uri = connection!.getAsString('uri');
 
       grpc.ChannelCredentials credentials;
-      if (connection.getProtocol('http') == 'https') {
+      if (connection.getAsString('uri') == 'https') {
         var sslCaFile = connection.getAsNullableString('ssl_ca_file');
-        List<int> trustedRoot = File(sslCaFile).readAsBytesSync();
+        List<int> trustedRoot = File(sslCaFile!).readAsBytesSync();
         credentials = grpc.ChannelCredentials.secure(
-            certificates: trustedRoot, authority: connection.getHost());
+            certificates: trustedRoot,
+            authority: connection.getAsString('host'));
       } else {
         credentials = const grpc.ChannelCredentials.insecure();
       }
@@ -199,8 +206,8 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
           credentials: credentials,
           connectionTimeout: Duration(milliseconds: _connectTimeout),
           idleTimeout: Duration(milliseconds: _timeout));
-      _channel = grpc.ClientChannel(connection.getHost(),
-          port: connection.getPort(), options: options);
+      _channel = grpc.ClientChannel(connection.getAsString('host'),
+          port: connection.getAsInteger('port'), options: options);
     } catch (ex) {
       _channel = null;
       throw ConnectionException(
@@ -215,14 +222,14 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [correlationId] 	(optional) transaction id to trace execution through call chain.
   /// Return 			Future that receives error or null no errors occured.
   @override
-  Future close(String correlationId) async {
+  Future close(String? correlationId) async {
     if (_channel != null) {
       // Eat exceptions
       try {
         _logger.debug(correlationId, 'Closed GRPC service at %s', [_uri]);
       } catch (ex) {
-        _logger.warn(
-            correlationId, 'Failed while closing GRPC service: %s', ex);
+        _logger
+            .warn(correlationId, 'Failed while closing GRPC service: %s', [ex]);
       }
       _channel = null;
       _uri = null;
@@ -237,8 +244,8 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// Return                (optional) Future that receives result object or error.
   grpc.ResponseFuture<R>
       call<Q extends GeneratedMessage, R extends GeneratedMessage>(
-          String method, String correlationId, Q request,
-          {grpc.CallOptions options}) {
+          String method, String? correlationId, Q request,
+          {grpc.CallOptions? options}) {
     method = method.toLowerCase();
     method = '/' + _clientName + '/' + method;
 
@@ -251,7 +258,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
       return item;
     });
 
-    final call = _channel.createCall(clientMethod,
+    final call = _channel!.createCall(clientMethod,
         Stream.fromIterable([request]), _options.mergedWith(options));
     return grpc.ResponseFuture(call);
   }
@@ -261,7 +268,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   ///  - [params]        invocation parameters.
   ///  - [filter]        (optional) filter parameters
   /// Return invocation parameters with added filter parameters.
-  StringValueMap addFilterParams(StringValueMap params, FilterParams filter) {
+  StringValueMap addFilterParams(StringValueMap? params, FilterParams? filter) {
     params ??= StringValueMap();
 
     if (filter != null) {
@@ -276,7 +283,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
   /// - [params]        invocation parameters.
   /// - [paging]        (optional) paging parameters
   /// Return invocation parameters with added paging parameters.
-  StringValueMap addPagingParams(StringValueMap params, PagingParams paging) {
+  StringValueMap addPagingParams(StringValueMap? params, PagingParams? paging) {
     params ??= StringValueMap();
 
     if (paging != null) {

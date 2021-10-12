@@ -14,7 +14,7 @@ void main() {
   ]);
 
   group('GrpcEndpoint', () {
-    GrpcEndpoint endpoint;
+    late GrpcEndpoint endpoint;
 
     setUpAll(() async {
       endpoint = GrpcEndpoint();
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('Is Open', () async {
-      expect(await endpoint.isOpen(), isTrue);
+      expect(endpoint.isOpen(), isTrue);
     });
   });
 }
