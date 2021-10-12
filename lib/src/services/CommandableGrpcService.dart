@@ -57,7 +57,7 @@ import './GrpcService.dart';
 ///
 
 abstract class CommandableGrpcService with GrpcService {
-  String _name;
+  final String _name;
   CommandSet? _commandSet;
 
   /// Creates a new instance of the service.

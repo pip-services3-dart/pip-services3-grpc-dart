@@ -1,5 +1,5 @@
 name: pip_services3_grpc
-version: 1.1.0
+version: 1.1.1
 description: This component library is a part of the [Pip.Services](https://github.com/pip-services/pip-services) project.It provides the following synchronous communication components.
 homepage: https://github.com/pip-services3-dart/pip-services3-grpc-dart
 

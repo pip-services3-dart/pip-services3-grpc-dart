@@ -112,7 +112,7 @@ class GrpcEndpoint implements IOpenable, IConfigurable, IReferenceable {
   Map<String, Schema>? _commandableSchemas = {};
   _CommandableMediator? _commandableService;
   final _services = <grpc.Service>[];
-  List<grpc.Interceptor> _interceptors = [];
+  final List<grpc.Interceptor> _interceptors = [];
 
   /// Configures this GrpcEndpoint using the given configuration parameters.
   ///

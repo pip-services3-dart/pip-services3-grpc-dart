@@ -9,3 +9,7 @@
 - Migrated to null safety
 - Added tracers
 - Updated instrument functions
+
+## 1.1.1
+
+- Updated example

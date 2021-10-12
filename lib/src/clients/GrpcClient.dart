@@ -81,7 +81,7 @@ abstract class GrpcClient implements IOpenable, IConfigurable, IReferenceable {
     true
   ]);
 
-  String _clientName;
+  final String _clientName;
 
   /// The GRPC client chanel
   grpc.ClientChannel? _channel;
